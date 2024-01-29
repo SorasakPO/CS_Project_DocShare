@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
 </head>
 <body>
-    <h1>Welcome to Website</h1>
+<div class="container w-50 p-3 content">
+    <p>หน้าเพิ่มวิชา</p>
+<!--    <ul class="navbar-nav me-auto mb-2 mb-lg-0">-->
+<!--        <li class="nav-item">-->
+<!--            <a class="btn btn-primary" th:href="@{/subject}">Login</a>-->
+<!--        </li>-->
+<!--    </ul>-->
+
+</div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package ku.cs.csProject.Entity;
+package ku.cs.csProject.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,5 +14,6 @@ public class Subject {
     @Id
     @GeneratedValue
     private UUID subjectId;
+
     protected String subjectName;
 }

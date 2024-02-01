@@ -12,12 +12,13 @@ public class User {
     @Id
     @GeneratedValue
     private UUID userID;
-
     private String firstName;
     private String lastName;
-    private String mail;
+    private String email;
+    private String lineId;
+    private String facebookLink;
 
-    @ManyToOne
-    @JoinColumn(name = "userType_id")
-    private UserType userType;
+    private String userStatus;
+    private String userRole;
+
 }

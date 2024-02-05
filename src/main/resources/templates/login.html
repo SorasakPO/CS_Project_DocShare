@@ -18,7 +18,12 @@
             <label for="inputPassword" class="form-label">Password</label>
             <input type="password" class="form-control" id="inputPassword">
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a class="btn btn-primary" th:href="@{/signup}">Sign up</a>
+            </div>
+        </div>
     </form>
 </div>
 </body>

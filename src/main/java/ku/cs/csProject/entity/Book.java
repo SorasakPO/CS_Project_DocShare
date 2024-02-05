@@ -17,7 +17,8 @@ public class Book {
     private String bookImagePath;
     private String bookDes;
     private String bookStatus;
-    private String bookGenre;
+    private String bookGiveType;
+    private String bookDueDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

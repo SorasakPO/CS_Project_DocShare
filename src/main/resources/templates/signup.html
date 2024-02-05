@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/scriptCasket/signup.js}"></script>
+</head>
+<body>
+<div class="container w-50 p-3">
+    <h1 class="display-5">Sign Up</h1>
+    <form>
+
+        <div class="row mb-3">
+            <label for="inputFirstName">Name</label>
+            <div class="col">
+                <input id="inputFirstName" type="input" class="form-control" name="firstName" placeholder="First name"
+                       required pattern="[A-Za-z]{1,}">
+            </div>
+            <div class="col">
+                <input id="inputLastName" type="input" class="form-control" name="lastName" placeholder="Last name"
+                       required pattern="[A-Za-z]{1,}">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputEmail">Email</label>
+            <input id="inputEmail" type="input" class="form-control" name="email" placeholder="Email" required
+                   pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
+        </div>
+        <div class="mb-3">
+            <label for="inputPassword">Password</label>
+            <input id="inputPassword" type="password" class="form-control" name="password" placeholder="Password"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputTel">Tel</label>
+            <input id="inputTel" type="tel" class="form-control" name="tel" placeholder="Telephone Number"
+                   pattern="[0-9]{10}">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputLine">Line ID</label>
+            <input id="inputLine" type="tel" class="form-control" name="lineId" placeholder="Line ID"
+                   pattern="[A-Za-z0-9_]{5,}">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputfacebookLink">Facebook Link</label>
+            <input id="inputfacebookLink" type="text" class="form-control" name="facebookLink" placeholder="Facebook Link"
+                      pattern="https?://.+">
+        </div>
+
+        <button id="submit-button" type="submit" class="btn btn-primary">Sign Up</button>
+    </form>
+
+</div>
+</body>
+</html>

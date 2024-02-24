@@ -1,5 +1,5 @@
 package ku.cs.csProject.common;
 
-public enum BookGenre {
+public enum BookGiveType {
     DONATION_BOOK, LENDING_BOOK;
 }

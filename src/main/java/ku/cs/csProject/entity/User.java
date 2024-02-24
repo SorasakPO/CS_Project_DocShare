@@ -1,6 +1,8 @@
 package ku.cs.csProject.entity;
 
 import jakarta.persistence.*;
+import ku.cs.csProject.common.UserRole;
+import ku.cs.csProject.common.UserStatus;
 import lombok.Data;
 
 import java.util.UUID;
@@ -17,11 +19,15 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+
     private String telephoneNumber;
     private String lineId;
     private String facebookLink;
 
-    private String userStatus;
-    private String userRole;
+    private UserStatus userStatus;
+    private UserRole userRole;
 
+    public String getFirstName() {
+        return firstName;
+    }
 }

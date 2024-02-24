@@ -1,5 +1,7 @@
 package ku.cs.csProject.service;
 
+import ku.cs.csProject.common.UserRole;
+import ku.cs.csProject.common.UserStatus;
 import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.SignupRequest;
 import org.modelmapper.ModelMapper;
@@ -33,8 +35,8 @@ public class SignupService {
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         record.setPassword(hashedPassword);
 
-        record.setUserRole("ROLE_USER");
-        record.setUserStatus("WUT"); //มีทำไมนะ
+        record.setUserRole(UserRole.BORROWER);
+        record.setUserStatus(UserStatus.VISIBLE);
 
         repository.save(record);
     }

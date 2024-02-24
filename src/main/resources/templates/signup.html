@@ -11,6 +11,12 @@
 <div class="container w-50 p-3">
     <h1 class="display-5">Sign Up</h1>
     <form action="#" th:action="@{/signup}" method="POST">
+
+        <div id="success-msg" class="alert alert-success"
+             th:if="${signupSuccess}">
+            Successfully signed up! Please <a th:href="@{/login}">login</a>.
+        </div>
+
         <div class="row mb-3">
             <label for="inputFirstName">Name</label>
             <div class="col">
@@ -32,24 +38,6 @@
             <label for="inputPassword">Password</label>
             <input id="inputPassword" type="password" class="form-control" name="password" placeholder="Password"
                    required>
-        </div>
-
-        <div class="mb-3">
-            <label for="inputTel">Tel</label>
-            <input id="inputTel" type="tel" class="form-control" name="telephoneNumber" placeholder="Telephone Number"
-                   pattern="[0-9]{10}">
-        </div>
-
-        <div class="mb-3">
-            <label for="inputLine">Line ID</label>
-            <input id="inputLine" type="input" class="form-control" name="lineId" placeholder="Line ID"
-                   pattern="[A-Za-z0-9_]{5,}">
-        </div>
-
-        <div class="mb-3">
-            <label for="inputfacebookLink">Facebook Link</label>
-            <input id="inputfacebookLink" type="text" class="form-control" name="facebookLink" placeholder="Facebook Link"
-                      pattern="https?://.+">
         </div>
 
         <button id="submit-button" type="submit" class="btn btn-primary">Sign Up</button>

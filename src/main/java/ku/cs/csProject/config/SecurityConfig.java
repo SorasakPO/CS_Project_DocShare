@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signup")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/book/add")).permitAll()
 
                         .anyRequest().authenticated()
                 )

@@ -3,7 +3,7 @@ package ku.cs.csProject.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -13,8 +13,8 @@ public class Transaction {
     @Id
     @GeneratedValue
     private UUID transactionId;
-    private LocalDateTime borrowDate;
-    private LocalDateTime returnDate;
+    private LocalDate borrowDate;
+    private LocalDate returnDate;
 
     @OneToOne
     @JoinColumn(name = "book_id")

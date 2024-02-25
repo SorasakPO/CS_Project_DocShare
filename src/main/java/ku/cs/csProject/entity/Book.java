@@ -5,7 +5,7 @@ import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -18,7 +18,7 @@ public class Book {
     private String bookName;
     private String bookImagePath;
     private String bookDes;
-    private String bookDueDate;
+    private LocalDate bookDueDate;
 
     private BookStatus bookStatus;
     private BookGiveType bookGiveType;

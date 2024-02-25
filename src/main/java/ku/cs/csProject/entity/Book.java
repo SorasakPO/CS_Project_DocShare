@@ -16,12 +16,21 @@ public class Book {
     @GeneratedValue
     private UUID bookId;
     private String bookName;
-    private String bookImagePath;
     private String bookDes;
     private String bookDueDate;
+    private String bookImagePath;
 
     private BookStatus bookStatus;
     private BookGiveType bookGiveType;
+
+    public Book(String bookName, String bookDes, String bookDueDate, String bookImagePath) {
+        this.bookName = bookName;
+        this.bookDes = bookDes;
+        this.bookDueDate = bookDueDate;
+        this.bookImagePath = bookImagePath;
+    }
+
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")

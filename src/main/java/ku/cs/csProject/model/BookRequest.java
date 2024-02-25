@@ -7,8 +7,6 @@ public class BookRequest {
 
     private String bookName;
 
-    private String bookImagePath;
-
     private String bookDes;
 
     private String bookStatus;
@@ -16,5 +14,7 @@ public class BookRequest {
     private String bookGiveType;
 
     private String bookDueDate;
+
+    private String bookImagePath;
 
 }

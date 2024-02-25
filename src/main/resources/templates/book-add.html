@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <title>CS Project</title>
   <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
   <script th:src="@{/js/bootstrap.min.js}"></script>
-  <script>
-    function previewImage(input) {
-      var preview = document.getElementById('preview');
-      var imageUrl = input.value;
-
-      if (imageUrl) {
-        preview.src = imageUrl;
-        preview.style.display = 'block';
-      } else {
-        preview.src = '';
-        preview.style.display = 'none';
-      }
-    }
+    <script>
+        function DoCheckUncheckDisplay(d,dchecked,dunchecked)
+        {
+            if( d.checked == true )
+            {
+                document.getElementById(dchecked).style.display = "block";
+                document.getElementById(dunchecked).style.display = "none";
+            }
+            else
+            {
+                document.getElementById(dchecked).style.display = "none";
+                document.getElementById(dunchecked).style.display = "block";
+            }
+        }
+    </script>
   </script>
 </head>
 <body>
@@ -26,17 +28,6 @@
   <h1 class="display-5">Add Book</h1>
   <form action="#" th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
 
-<!--    <div class="mb-3">-->
-<!--      <label for="category">Category</label>-->
-<!--      <select class="form-control" id="category" name="category" required>-->
-<!--        <option value="" selected disabled hidden>Select Category...</option>-->
-<!--        <option>Bed</option>-->
-<!--        <option>Chair</option>-->
-<!--        <option>Table</option>-->
-<!--        <option>Misc</option>-->
-<!--      </select>-->
-<!--    </div>-->
-
     <div class="mb-3">
       <label for="bookName">Book Name</label>
       <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
@@ -44,47 +35,37 @@
 
     <div class="mb-3">
       <label for="bookDes">Book Description</label>
-      <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" required></textarea>
+      <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" accept="image/*" required></textarea>
     </div>
-
-<!--    <div class="row mb-3">-->
-<!--      <div class="col">-->
-<!--        <label for="productPrice">Product Price</label>-->
-<!--        <input id="productPrice" type="number" class="form-control" name="productPrice" required>-->
-<!--      </div>-->
-<!--      <div class="col">-->
-<!--        <label for="productStock">Product Stock</label>-->
-<!--        <input id="productStock" type="number" class="form-control" name="productStock" required>-->
-<!--      </div>-->
-<!--    </div>-->
 
     <div class="mb-3">
-      <label for="bookImagePath">Book Image Path</label>
+      <label for="bookImagePath">Book Image</label>
       <div style="display: flex; justify-content: center;">
-        <input id="bookImagePath" type="text" class="form-control" name="bookImagePath"
-               placeholder="Enter Image URL" onchange="previewImage(this)">
-      </div>
-      <br>
-      <div style="display: flex; justify-content: center;">
-        <img id="preview" src="#" alt="Book Image" style="max-width: 50%; max-height: 50%; display: none;">
+          <input id="bookImagePath" type="file" class="form-control" name="bookImagePath">
       </div>
     </div>
 
-    <div>
-      Check/uncheck:
-      <input type="checkbox" onclick="DoCheckUncheckDisplay(this,'checkbox-checked','checkbox-unchecked')" style="margin:0;">
-    </div>
 
-    <div id="checkbox-checked" style="display:none; color:green;">
-      The checkbox is checked.
-    </div>
+      <div class="mb-3">
+          <label for="bookDueDate">Book Due Date:</label>
+          <input type="date" id="bookDueDate" name="bookDueDate">
+      </div>
 
-    <div id="checkbox-unchecked" style="display:none; color:red;">
-      The checkbox is unchecked.
-    </div>
+<!--    <div>-->
+<!--      Check/uncheck:-->
+<!--      <input type="checkbox" onclick="DoCheckUncheckDisplay(this,'checkbox-checked','checkbox-unchecked')" style="margin:0;">-->
+<!--    </div>-->
 
+<!--      <div id="checkbox-checked" style="display:none; color:green;">-->
+<!--          <label for="bookDueDate">Book Due Date:</label>-->
+<!--          <input type="date" id="bookDueDate" name="bookDueDate">-->
+<!--      </div>-->
 
-    <button id="submit-button" type="submit" class="btn btn-primary">Add Book</button>
+<!--      <div id="checkbox-unchecked" style="display:none;">-->
+<!--          asdwas-->
+<!--      </div>-->
+
+      <button id="submit-button" type="submit" class="btn btn-primary">Add Book</button>
   </form>
 </div>
 

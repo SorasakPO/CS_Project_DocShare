@@ -16,9 +16,9 @@ public class Book {
     @GeneratedValue
     private UUID bookId;
     private String bookName;
-    private String bookImagePath;
     private String bookDes;
-    private LocalDate bookDueDate;
+    private String bookDueDate; //ควรแก้เป็น private LocalDate bookDueDate;
+    private String bookImagePath;
 
     private BookStatus bookStatus;
     private BookGiveType bookGiveType;
@@ -26,6 +26,5 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner; //owner
-
 
 }

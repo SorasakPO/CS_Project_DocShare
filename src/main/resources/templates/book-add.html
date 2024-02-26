@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+<div class="container">
+    <h1 class="display-5">Add Book</h1>
+    <form th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
+
+        <div class="mb-3">
+            <label for="bookName">Book Name</label>
+            <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="bookDes">Book Description</label>
+            <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" accept="image/*"
+                      required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="bookImagePath">Book Image</label>
+            <div style="display: flex; justify-content: center;">
+                <input id="bookImagePath" type="file" class="form-control" name="bookImagePath">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="bookDueDate">Book Due Date:</label>
+            <input type="date" id="bookDueDate" name="bookDueDate">
+        </div>
+        <button id="submit-button" type="submit" class="btn btn-primary">Add Book</button>
+    </form>
+</div>
+
+</body>
+</html>

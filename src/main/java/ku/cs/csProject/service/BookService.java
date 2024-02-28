@@ -2,8 +2,10 @@ package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.entity.Book;
+import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.repository.BookRepository;
+import ku.cs.csProject.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,15 +30,19 @@ public class BookService {
     private BookRepository bookRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     public List<Book> getBooksByBookGiveType(BookGiveType bookGiveType) {
         return bookRepository.findByBookGiveType(bookGiveType);
     }
 
-    public void createBook(BookRequest request, MultipartFile bookImagePath) {
+    public void createBook(BookRequest request, MultipartFile bookImagePath, String giveType, Principal principal) {
 
         Book record = modelMapper.map(request, Book.class);
+        User user = userRepository.findByEmail(principal.getName());
 
         // รับวันที่และเวลาปัจจุบัน
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -62,7 +69,13 @@ public class BookService {
             e.printStackTrace();
         }
 
+        if (giveType == "DONATION") {
+            record.setBookGiveType(BookGiveType.DONATION_BOOK);
+        }else {
+            record.setBookGiveType(BookGiveType.LENDING_BOOK);
+        }
         record.setBookImagePath(fileName);
+        record.setOwner(user);
         bookRepository.save(record);
     }
 

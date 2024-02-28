@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -33,8 +35,8 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public String createBook(@ModelAttribute BookRequest bookRequest, @RequestParam("bookImagePath") MultipartFile bookImagePath, Model model) {
-        bookService.createBook(bookRequest, bookImagePath);
+    public String createBook(@ModelAttribute BookRequest bookRequest, @RequestParam("bookImagePath") MultipartFile bookImagePath, @RequestParam("giveType") String giveType, Principal principal) {
+        bookService.createBook(bookRequest, bookImagePath, giveType, principal);
         return "redirect:/books/add";
     }
 }

@@ -16,11 +16,11 @@ public class Transaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User recipient; //ผู้ยืม หรือผู้รับบริจาค
 }

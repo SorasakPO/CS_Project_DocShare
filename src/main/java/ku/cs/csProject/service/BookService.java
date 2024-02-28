@@ -1,9 +1,14 @@
 package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.BookGiveType;
+import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.entity.Book;
+import ku.cs.csProject.entity.Transaction;
+import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.repository.BookRepository;
+import ku.cs.csProject.repository.TransactionRepository;
+import ku.cs.csProject.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BookService {
@@ -29,8 +36,14 @@ public class BookService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<Book> getBooksByBookGiveType(BookGiveType bookGiveType) {
-        return bookRepository.findByBookGiveType(bookGiveType);
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    public List<Book> getBooksByBookGiveTypeAndBookStatus(BookGiveType bookGiveType, BookStatus bookStatus) {
+        return bookRepository.findByBookGiveTypeAndBookStatus(bookGiveType, bookStatus);
     }
 
     public void createBook(BookRequest request, MultipartFile bookImagePath) {
@@ -46,7 +59,7 @@ public class BookService {
 
         // บันทึกไฟล์ลงในที่เก็บไฟล์ (ตัวอย่าง: uploads/)
         try {
-            String uploadDir = "src/main/resources/uploads/";
+            String uploadDir = "src/main/resources/static/uploads/";
             Path uploadPath = Paths.get(uploadDir);
 
             if (!Files.exists(uploadPath)) {
@@ -64,6 +77,18 @@ public class BookService {
 
         record.setBookImagePath(fileName);
         bookRepository.save(record);
+    }
+
+    public void acceptDonation(UUID bookId, Principal principal) {
+
+        User recipient = userRepository.findByEmail(principal.getName());
+        Book book = bookRepository.findByBookId(bookId);
+        book.setBookStatus(BookStatus.DONATED);
+        bookRepository.save(book);
+        Transaction transaction = new Transaction();
+        transaction.setBook(book);
+        transaction.setRecipient(recipient);
+        transactionRepository.save(transaction);
     }
 
 }

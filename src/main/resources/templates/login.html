@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS Project</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -9,7 +10,7 @@
 <body>
 
 <div class="container">
-    <h1 class="display-5">Login</h1>
+    <h1 class="display-5">เข้าสู่ระบบ</h1>
 
     <form th:action="@{/login}" method="POST">
         <div id="error-msg" th:if="${param.error}" class="alert alert-danger">
@@ -20,22 +21,22 @@
         </div>
 
         <div class="mb-3">
-            <label for="inputEmail">Email</label>
+            <label for="inputEmail">อีเมลล์</label>
             <input type="text" name="email" id="inputEmail"
                    class="form-control" required>
         </div>
         <div class="mb-3">
-            <label for="inputPassword">Password</label>
+            <label for="inputPassword">รหัสผ่าน</label>
             <input type="password" name="password" id="inputPassword"
                    class="form-control" required>
         </div>
         <div class="row">
             <div class="col">
-                <button id="submit-button" type="submit" class="btn btn-primary">Login</button>
+                <button id="submit-button" type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
             </div>
 
             <div class="col">
-                <a th:href="@{/signup}" class="float-end">Sign Up</a>
+                <a th:href="@{/signup}" class="float-end">ลงทะเบียน</a>
             </div>
         </div>
 

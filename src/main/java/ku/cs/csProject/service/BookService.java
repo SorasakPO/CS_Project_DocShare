@@ -69,7 +69,7 @@ public class BookService {
             e.printStackTrace();
         }
 
-        if (giveType == "DONATION") {
+        if (giveType.equals("DONATION")) {
             record.setBookGiveType(BookGiveType.DONATION_BOOK);
         }else {
             record.setBookGiveType(BookGiveType.LENDING_BOOK);

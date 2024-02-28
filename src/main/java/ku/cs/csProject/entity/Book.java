@@ -17,11 +17,11 @@ public class Book {
     private UUID bookId;
     private String bookName;
     private String bookDes;
-    private String bookDueDate; //ควรแก้เป็น private LocalDate bookDueDate;
+    private LocalDate bookDueDate;
     private String bookImagePath;
 
-    private BookStatus bookStatus;
     private BookGiveType bookGiveType;
+    private BookStatus bookStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

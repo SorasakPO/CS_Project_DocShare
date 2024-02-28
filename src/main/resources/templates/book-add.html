@@ -36,32 +36,30 @@
         </div>
 
         <p>เลือกรูปแบบการให้</p>
-        <input type="radio" id="option1" name="option" value="option1" onclick="showText('option1')" style="margin:0;" checked>
+        <input type="radio" id="option1" name="bookGiveType" value="GIVE" onclick="showText('option1')" style="margin:0;" checked>
         <label for="option1">ให้เลย</label><br>
-        <input type="radio" id="option2" name="option" value="option2" onclick="showText('option2')" style="margin:0;">
+        <input type="radio" id="option2" name="bookGiveType" value="LEND" onclick="showText('option2')" style="margin:0;">
         <label for="option2">ยืม-คืน</label><br>
 
         <div id="text1" class="hidden">
         </div>
 
         <div id="text2" class="hidden">
-            <label for="returnDate">Return Date:</label><br>
-            <input type="date" id="returnDate" name="returnDate" required><br>
+            <label for="bookDueDate">Return Date:</label><br>
+            <input type="date" id="bookDueDate" name="bookDueDate"><br>
         </div>
 
         <script>
-            function showText(option) {
+            function showText(bookStatus) {
                 var text1 = document.getElementById("text1");
                 var text2 = document.getElementById("text2");
 
-                if (option === "option1") {
+                if (bookStatus === "option1") {
                     text1.style.display = "block";
                     text2.style.display = "none";
-                    return "GIVE";
-                } else if (option === "option2") {
+                } else if (bookStatus === "option2") {
                     text1.style.display = "none";
                     text2.style.display = "block";
-                    return "BORROW";
                 }
             }
         </script>

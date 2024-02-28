@@ -3,6 +3,8 @@ package ku.cs.csProject.model;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Data
 public class BookRequest {
 
@@ -14,7 +16,7 @@ public class BookRequest {
 
     private String bookGiveType;
 
-    private String bookDueDate;
+    private LocalDate bookDueDate;
 
     private MultipartFile bookImagePath;
 

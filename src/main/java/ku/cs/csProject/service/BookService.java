@@ -34,10 +34,10 @@ public class BookService {
     private BookRepository bookRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -46,9 +46,10 @@ public class BookService {
         return bookRepository.findByBookGiveTypeAndBookStatus(bookGiveType, bookStatus);
     }
 
-    public void createBook(BookRequest request, MultipartFile bookImagePath) {
+    public void createBook(BookRequest request, MultipartFile bookImagePath, String giveType, Principal principal) {
 
         Book record = modelMapper.map(request, Book.class);
+        User user = userRepository.findByEmail(principal.getName());
 
         // รับวันที่และเวลาปัจจุบัน
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -75,7 +76,14 @@ public class BookService {
             e.printStackTrace();
         }
 
+        if (giveType.equals("DONATION")) {
+            record.setBookGiveType(BookGiveType.DONATION_BOOK);
+        }else {
+            record.setBookGiveType(BookGiveType.LENDING_BOOK);
+        }
         record.setBookImagePath(fileName);
+        record.setOwner(user);
+        record.setBookStatus(BookStatus.AVAILABLE);
         bookRepository.save(record);
     }
 

@@ -35,8 +35,8 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public String createBook(@ModelAttribute BookRequest bookRequest, @RequestParam("bookImagePath") MultipartFile bookImagePath, Model model) {
-        bookService.createBook(bookRequest, bookImagePath);
+    public String createBook(@ModelAttribute BookRequest bookRequest, @RequestParam("bookImagePath") MultipartFile bookImagePath, @RequestParam("giveType") String giveType, Principal principal) {
+        bookService.createBook(bookRequest, bookImagePath, giveType, principal);
         return "redirect:/books/add";
     }
 

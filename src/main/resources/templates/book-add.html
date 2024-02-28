@@ -6,36 +6,67 @@
     <title>CS Project</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
 <div class="container">
-    <h1 class="display-5">Add Book</h1>
+    <h1 class="display-5">เพิ่มหนังสือ</h1>
     <form th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
 
         <div class="mb-3">
-            <label for="bookName">Book Name</label>
+            <label for="bookName">ชื่อหนังสือ</label>
             <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
         </div>
 
         <div class="mb-3">
-            <label for="bookDes">Book Description</label>
+            <label for="bookDes">รายละเอียด</label>
             <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" accept="image/*"
                       required></textarea>
         </div>
 
         <div class="mb-3">
-            <label for="bookImagePath">Book Image</label>
+            <label for="bookImagePath">รูปหนังสือ</label>
             <div style="display: flex; justify-content: center;">
                 <input id="bookImagePath" type="file" class="form-control" name="bookImagePath">
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="bookDueDate">Book Due Date:</label>
-            <input type="date" id="bookDueDate" name="bookDueDate">
+        <p>เลือกรูปแบบการให้</p>
+        <input type="radio" id="option1" name="giveType" value="DONATION" onclick="showText('option1')" style="margin:0;" checked>
+        <label for="option1">บริจาค</label><br>
+        <input type="radio" id="option2" name="giveType" value="LENDING" onclick="showText('option2')" style="margin:0;">
+        <label for="option2">ยืม-คืน</label><br>
+
+        <div id="text1" class="hidden">
         </div>
-        <button id="submit-button" type="submit" class="btn btn-primary">Add Book</button>
+
+        <div id="text2" class="hidden">
+            <label for="bookDueDate">วันที่ต้องการคืน:</label><br>
+            <input type="date" id="bookDueDate" name="bookDueDate"><br>
+        </div>
+
+        <script>
+            function showText(bookStatus) {
+                var text1 = document.getElementById("text1");
+                var text2 = document.getElementById("text2");
+
+                if (bookStatus === "option1") {
+                    text1.style.display = "block";
+                    text2.style.display = "none";
+                } else if (bookStatus === "option2") {
+                    text1.style.display = "none";
+                    text2.style.display = "block";
+                }
+            }
+        </script>
+        <div>
+            <button id="submit-button" type="submit" class="btn btn-primary">เพิ่มหนังสือ</button>
+        </div>
     </form>
 </div>
 

@@ -1,5 +1,6 @@
 package ku.cs.csProject.config;
 
+import ku.cs.csProject.common.UserRole;
 import ku.cs.csProject.service.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +28,10 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signup")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/book/add")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/book/add")).hasAnyAuthority(UserRole.ADMIN.name(), UserRole.LENDER.name())
 
-                        .anyRequest().authenticated()
+
+                                .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")

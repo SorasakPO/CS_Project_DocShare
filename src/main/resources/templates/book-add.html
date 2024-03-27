@@ -15,11 +15,11 @@
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
 <div class="container">
-    <h1 class="display-5">เพิ่มหนังสือ</h1>
+    <h1 class="display-5">เพิ่มเอกสาร</h1>
     <form th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
 
         <div class="mb-3">
-            <label for="bookName">ชื่อหนังสือ</label>
+            <label for="bookName">ชื่อเอกสาร</label>
             <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
         </div>
 
@@ -30,9 +30,9 @@
         </div>
 
         <div class="mb-3">
-            <label for="bookImagePath">รูปหนังสือ</label>
+            <label for="bookImagePath">รูปเอกสาร</label>
             <div style="display: flex; justify-content: center;">
-                <input id="bookImagePath" type="file" class="form-control" name="bookImagePath">
+                <input id="bookImagePath" type="file" class="form-control" name="bookImagePath" required>
             </div>
         </div>
 
@@ -65,7 +65,7 @@
             }
         </script>
         <div>
-            <button id="submit-button" type="submit" class="btn btn-primary">เพิ่มหนังสือ</button>
+            <button id="submit-button" type="submit" class="btn btn-primary">เพิ่มเอกสาร</button>
         </div>
     </form>
 </div>

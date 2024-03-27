@@ -29,6 +29,12 @@ public class BookController {
         return "books-donation";
     }
 
+    @GetMapping("/lending")
+    public String getBookByBookGiveTypeLending(Model model) {
+        model.addAttribute("books", bookService.getBooksByBookGiveTypeAndBookStatus(BookGiveType.LENDING_BOOK, BookStatus.AVAILABLE));
+        return "books-lending";
+    }
+
     @GetMapping("/add")
     public String getProductForm(Model model) {
         return "book-add";
@@ -44,5 +50,11 @@ public class BookController {
     public String acceptDonation(@RequestParam UUID bookId, Principal principal) {
         bookService.acceptDonation(bookId, principal);
         return "redirect:/books/donation";
+    }
+
+    @PostMapping("/acceptLending")
+    public String acceptLending(@RequestParam UUID bookId, Principal principal) {
+        bookService.acceptLending(bookId, principal);
+        return "redirect:/books/lending";
     }
 }

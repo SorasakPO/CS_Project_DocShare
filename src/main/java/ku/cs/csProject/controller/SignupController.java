@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class SignupController {
@@ -21,9 +23,9 @@ public class SignupController {
     }
 
     @PostMapping("/signup")
-    public String signupUser(@ModelAttribute SignupRequest user, Model model) {
+    public String signupUser(@ModelAttribute SignupRequest user, @RequestParam("identificationImage") MultipartFile identificationImage, Model model) {
         if (signupService.isEmailAvailable(user.getEmail())) {
-            signupService.createUser(user);
+            signupService.createUser(user, identificationImage);
             model.addAttribute("signupSuccess", true);
         }
         else {

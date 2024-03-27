@@ -22,12 +22,10 @@ public class User {
 
     private String telephoneNumber;
     private String lineId;
-    private String facebookLink;
+
+    private String identificationImage;
 
     private UserStatus userStatus;
     private UserRole userRole;
 
-    public String getFirstName() {
-        return firstName;
-    }
 }

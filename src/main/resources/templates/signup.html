@@ -7,43 +7,121 @@
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/scriptCasket/signup.js}"></script>
+    <style>
+        #image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            min-width: 100px;
+            min-height: 100px;
+            width: auto; /* ให้รูปภาพปรับขนาดตามกว้าง */
+            height: auto; /* ให้รูปภาพปรับขนาดตามสูง */
+            object-fit: contain; /* ปรับขนาดภาพให้พอดีกับพื้นที่ */
+            margin-top: 10px; /* ระยะห่างด้านบน */
+        }
+        body {
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h1 class="display-5">Sign Up</h1>
-    <form action="#" th:action="@{/signup}" method="POST">
+    <form action="#" th:action="@{/signup}" method="POST" enctype="multipart/form-data">
 
         <div id="success-msg" class="alert alert-success"
              th:if="${signupSuccess}">
-            Successfully signed up! Please <a th:href="@{/login}">login</a>.
+            ลงทะเบียนสำเร็จแล้ว! <a th:href="@{/login}">เข้าสู้ระบบ</a>.
         </div>
 
         <div class="row mb-3">
-            <label for="inputFirstName">Name</label>
+            <label for="inputFirstName">ชื่อ-นามสกุล</label>
             <div class="col">
-                <input id="inputFirstName" type="input" class="form-control" name="firstName" placeholder="First name"
+                <input id="inputFirstName" type="input" class="form-control" name="firstName" placeholder="ชื่อ"
                        required pattern="[A-Za-z]{1,}">
             </div>
             <div class="col">
-                <input id="inputLastName" type="input" class="form-control" name="lastName" placeholder="Last name"
+                <input id="inputLastName" type="input" class="form-control" name="lastName" placeholder="นามสกุล"
                        required pattern="[A-Za-z]{1,}">
             </div>
         </div>
 
         <div class="mb-3">
-            <label for="inputEmail">Email</label>
-            <input id="inputEmail" type="input" class="form-control" name="email" placeholder="Email" required
+            <label for="telephoneNumber">เบอร์โทรติดต่อ</label>
+            <input id="telephoneNumber" type="input" class="form-control" name="telephoneNumber" placeholder="เบอร์โทร" required
+                   pattern="[0-9]{10}">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputEmail">อีเมลล์</label>
+            <input id="inputEmail" type="input" class="form-control" name="email" placeholder="อีเมลล์" required
                    pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
         </div>
+
         <div class="mb-3">
-            <label for="inputPassword">Password</label>
-            <input id="inputPassword" type="password" class="form-control" name="password" placeholder="Password"
+            <label for="inputPassword">รหัสผ่าน</label>
+            <input id="inputPassword" type="password" class="form-control" name="password" placeholder="รหัสผ่าน"
                    required>
         </div>
 
-        <button id="submit-button" type="submit" class="btn btn-primary">Sign Up</button>
-    </form>
+        <!-- เพิ่มช่องให้ผู้ใช้ยืนยันรหัสผ่าน -->
+        <div class="mb-3">
+            <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+            <input id="confirmPassword" type="password" class="form-control" name="confirmPassword"
+                   placeholder="ยืนยันรหัสผ่าน"
+                   required>
+        </div>
 
+        <div class="mb-3">
+            <label for="identificationImage">รูปถ่ายหน้าตรงพร้อมบัตรประชาชน</label>
+            <div style="display: flex; justify-content: center;">
+                <input id="identificationImage" type="file" class="form-control" name="identificationImage" onchange="previewImage(event)" required>
+            </div>
+            <img id="image-preview" src="#" alt="รูปตัวอย่าง" style="display: none;">
+        </div>
+
+        <div class="mb-3">
+            <input type="checkbox" class="form-check-input" id="privacyPolicyCheck" required>
+            <label class="form-check-label" for="privacyPolicyCheck">
+                ฉันยอมรับ <a href="#">นโยบายความเป็นส่วนตัว</a>
+            </label>
+        </div>
+
+        <button id="submit-button" type="submit" class="btn btn-primary">ลงทะเบียน</button>
+
+    </form>
 </div>
+<!-- เพิ่มส่วนของ JavaScript เพื่อตรวจสอบรหัสผ่าน -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.getElementById("submit-button").addEventListener("click", function (event) {
+            var password = document.getElementById("inputPassword").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                alert("รหัสผ่านไม่ตรงกัน");
+                event.preventDefault();
+            }
+        });
+    });
+
+    // ฟังก์ชันสำหรับแสดงรูปตัวอย่าง
+    function previewImage(event) {
+        var input = event.target;
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var imagePreview = document.getElementById("image-preview");
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = "block";
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 </body>
+<div style="height: 10px;"></div>
 </html>

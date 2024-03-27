@@ -66,9 +66,17 @@ public class BookService {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            try (InputStream inputStream = bookImagePath.getInputStream()) {
+//            try (InputStream inputStream = bookImagePath.getInputStream()) {
+//                Path filePath = uploadPath.resolve(fileName);
+//                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            try {
+                byte[] bytes = bookImagePath.getBytes();
                 Path filePath = uploadPath.resolve(fileName);
-                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                Files.write(filePath, bytes);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -76,11 +84,7 @@ public class BookService {
             e.printStackTrace();
         }
 
-        if (giveType.equals("DONATION")) {
-            record.setBookGiveType(BookGiveType.DONATION_BOOK);
-        }else {
-            record.setBookGiveType(BookGiveType.LENDING_BOOK);
-        }
+        record.setBookGiveType(giveType.equals("DONATION") ? BookGiveType.DONATION_BOOK : BookGiveType.LENDING_BOOK);
         record.setBookImagePath(fileName);
         record.setOwner(user);
         record.setBookStatus(BookStatus.AVAILABLE);
@@ -92,6 +96,18 @@ public class BookService {
         User recipient = userRepository.findByEmail(principal.getName());
         Book book = bookRepository.findByBookId(bookId);
         book.setBookStatus(BookStatus.DONATED);
+        bookRepository.save(book);
+        Transaction transaction = new Transaction();
+        transaction.setBook(book);
+        transaction.setRecipient(recipient);
+        transactionRepository.save(transaction);
+    }
+
+    public void acceptLending(UUID bookId, Principal principal) {
+
+        User recipient = userRepository.findByEmail(principal.getName());
+        Book book = bookRepository.findByBookId(bookId);
+        book.setBookStatus(BookStatus.BORROWED);
         bookRepository.save(book);
         Transaction transaction = new Transaction();
         transaction.setBook(book);

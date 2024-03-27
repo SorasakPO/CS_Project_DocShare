@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+            integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+            crossorigin="anonymous"
+    />
 </head>
 <!--<body>-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="header">
@@ -21,10 +27,13 @@
                     <a class="nav-link" th:href="@{/}">หน้าหลัก</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{/books/donation}">หนังสือบริจาค</a>
+                    <a class="nav-link" th:href="@{/books/donation}">เอกสารบริจาค</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{/books/add}">เพิ่มหนังสือ</a>
+                    <a class="nav-link" th:href="@{/books/lending}">เอกสารยืมคืน</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated() and (hasAuthority('ADMIN') or hasAuthority('LENDER'))">
+                    <a class="nav-link" th:href="@{/books/add}">เพิ่มเอกสาร</a>
                 </li>
             </ul>
             <div sec:authorize="isAuthenticated()">
@@ -37,6 +46,7 @@
                     </li>
                 </ul>
             </div>
+
             <div sec:authorize="isAnonymous()">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -47,5 +57,10 @@
         </div>
     </div>
 </nav>
-<!--</body>-->
+<script>
+    function menuToggle() {
+        const toggleMenu = document.querySelector(".menu");
+        toggleMenu.classList.toggle("active");
+    }
+</script>
 </html>

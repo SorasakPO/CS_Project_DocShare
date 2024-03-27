@@ -27,4 +27,6 @@ public class Book {
     @JoinColumn(name = "user_id")
     private User owner; //owner
 
+
+
 }

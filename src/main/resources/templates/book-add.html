@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,64 +11,89 @@
             display: none;
         }
     </style>
+
 </head>
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
 <div class="container">
     <h1 class="display-5">เพิ่มเอกสาร</h1>
-    <form th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
-
-        <div class="mb-3">
-            <label for="bookName">ชื่อเอกสาร</label>
-            <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="bookDes">รายละเอียด</label>
-            <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" accept="image/*"
-                      required></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="bookImagePath">รูปเอกสาร</label>
-            <div style="display: flex; justify-content: center;">
-                <input id="bookImagePath" type="file" class="form-control" name="bookImagePath" required>
+    <div sec:authorize="(hasAuthority('BORROWER'))">
+        <h5>สมัครเป็นผู้ให้</h5>
+        <form th:action="@{/lender/register}" method="POST">
+            <div class="mb-3">
+                <label for="lineId">ID Line</label>
+                <input id="lineId" type="text" class="form-control" name="lineId" maxlength="50" required>
             </div>
-        </div>
+            <div class="mb-3">
+                <input type="checkbox" class="form-check-input" id="privacyPolicyCheck" required>
+                <label class="form-check-label" for="privacyPolicyCheck">
+                    ฉันยอมรับ <a href="#">นโยบาย</a>
+                </label>
+            </div>
+            <button id="register-button" type="submit" class="btn btn-primary">เริ่มเพิ่มเอกสาร</button>
+        </form>
+    </div>
+    <div sec:authorize="hasAnyAuthority('ADMIN', 'LENDER')">
+        <form th:action="@{/books/add}" method="POST" enctype="multipart/form-data">
 
-        <p>เลือกรูปแบบการให้</p>
-        <input type="radio" id="option1" name="giveType" value="DONATION" onclick="showText('option1')" style="margin:0;" checked>
-        <label for="option1">บริจาค</label><br>
-        <input type="radio" id="option2" name="giveType" value="LENDING" onclick="showText('option2')" style="margin:0;">
-        <label for="option2">ยืม-คืน</label><br>
+            <div class="mb-3">
+                <label for="bookName">ชื่อเอกสาร</label>
+                <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" required>
+            </div>
 
-        <div id="text1" class="hidden">
-        </div>
+            <div class="mb-3">
+                <label for="bookDes">รายละเอียด</label>
+                <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200"
+                          accept="image/*"
+                          required></textarea>
+            </div>
 
-        <div id="text2" class="hidden">
-            <label for="bookDueDate">วันที่ต้องการคืน:</label><br>
-            <input type="date" id="bookDueDate" name="bookDueDate"><br>
-        </div>
+            <div class="mb-3">
+                <label for="bookImagePath">รูปเอกสาร</label>
+                <div style="display: flex; justify-content: center;">
+                    <input id="bookImagePath" type="file" class="form-control" name="bookImagePath" required>
+                </div>
+            </div>
 
-        <script>
-            function showText(bookStatus) {
-                var text1 = document.getElementById("text1");
-                var text2 = document.getElementById("text2");
+            <p>เลือกรูปแบบการให้</p>
+            <input type="radio" id="option1" name="giveType" value="DONATION" onclick="showText('option1')"
+                   style="margin:0;" checked>
+            <label for="option1">บริจาค</label><br>
+            <input type="radio" id="option2" name="giveType" value="LENDING" onclick="showText('option2')"
+                   style="margin:0;">
+            <label for="option2">ยืม-คืน</label><br>
 
-                if (bookStatus === "option1") {
-                    text1.style.display = "block";
-                    text2.style.display = "none";
-                } else if (bookStatus === "option2") {
-                    text1.style.display = "none";
-                    text2.style.display = "block";
+            <div id="text1" class="hidden">
+            </div>
+
+            <div id="text2" class="hidden">
+                <label for="bookDueDate">วันที่ต้องการคืน:</label><br>
+                <input type="date" id="bookDueDate" name="bookDueDate"><br>
+            </div>
+
+            <script>
+                function showText(bookStatus) {
+                    var text1 = document.getElementById("text1");
+                    var text2 = document.getElementById("text2");
+
+                    if (bookStatus === "option1") {
+                        text1.style.display = "block";
+                        text2.style.display = "none";
+                    } else if (bookStatus === "option2") {
+                        text1.style.display = "none";
+                        text2.style.display = "block";
+                    }
+
+                    var today = new Date();
+                    var bookDueDateInput = document.getElementById("bookDueDate");
+                    bookDueDateInput.min = today.toISOString().split('T')[0];
                 }
-            }
-        </script>
-        <div>
-            <button id="submit-button" type="submit" class="btn btn-primary">เพิ่มเอกสาร</button>
-        </div>
-    </form>
+            </script>
+            <div>
+                <button id="submit-button" type="submit" class="btn btn-primary">เพิ่มเอกสาร</button>
+            </div>
+        </form>
+    </div>
 </div>
-
 </body>
 </html>

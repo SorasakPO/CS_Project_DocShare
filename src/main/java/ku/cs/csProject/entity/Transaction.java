@@ -1,6 +1,7 @@
 package ku.cs.csProject.entity;
 
 import jakarta.persistence.*;
+import ku.cs.csProject.common.TransactionStatus;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,11 +17,14 @@ public class Transaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
 
+    private TransactionStatus transactionStatus;
+
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User recipient; //ผู้ยืม หรือผู้รับบริจาค
+    private User recipient;
+
 }

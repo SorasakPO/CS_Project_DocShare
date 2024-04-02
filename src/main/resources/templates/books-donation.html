@@ -6,48 +6,8 @@
     <title>CS Project</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <style>
-        .card {
-            margin-bottom: 20px;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s;
-        }
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
 
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-img-top {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-        }
-
-        .card-body .btn {
-            width: 100%;
-        }
-
-        .lineId .button-link {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #00c300; /* สีเขียวของ Line */
-            color: #fff; /* สีของตัวหนังสือ */
-            text-decoration: none;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .lineId .button-link:hover {
-            background-color: #00ab00; /* สีเขียวเข้มเมื่อชี้ */
-        }
-    </style>
 </head>
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
@@ -62,8 +22,8 @@
                     <div class="row">
                         <div class="col-6">
                             <form>
-                                <button class="btn btn-outline-secondary btn-block" type="button" data-toggle="modal"
-                                        th:data-target="'#detailsModal-' + ${book.getBookId()}">รายละเอียด
+                                <button class="btn btn-outline-secondary btn-block" type="button" data-bs-toggle="modal"
+                                        th:data-bs-target="'#detailsModal-' + ${book.getBookId()}">รายละเอียด
                                 </button>
                             </form>
                             <!-- Modal -->
@@ -74,7 +34,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
-                                            <button type="button" class="btn-close" data-dismiss="modal"
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -104,7 +64,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด
                                             </button>
                                         </div>
                                     </div>
@@ -112,7 +72,8 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <form th:action="@{/books/acceptDonation}" method="POST">
+                            <form th:action="@{/books/acceptDonation}" method="POST"
+                                  onsubmit="if(confirmDonation()) { showConfirmationAlert(); return true; } else { return false; }">
                                 <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
                                 <button class="btn btn-primary btn-block" type="submit">รับ</button>
                             </form>
@@ -123,5 +84,14 @@
         </div>
     </div>
 </div>
+<script>
+    function confirmDonation() {
+        return confirm("คุณแน่ใจหรือไม่ที่ต้องการรับหนังสือนี้?");
+    }
+
+    function showConfirmationAlert() {
+        alert("คุณได้ยืนยันการรับหนังสือแล้ว");
+    }
+</script>
 </body>
 </html>

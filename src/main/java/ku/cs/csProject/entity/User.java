@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import ku.cs.csProject.common.UserRole;
 import ku.cs.csProject.common.UserStatus;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data

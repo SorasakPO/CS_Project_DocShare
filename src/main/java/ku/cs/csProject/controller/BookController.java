@@ -3,9 +3,7 @@ package ku.cs.csProject.controller;
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.model.BookRequest;
-import ku.cs.csProject.repository.BookRepository;
 import ku.cs.csProject.service.BookService;
-import ku.cs.csProject.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +20,6 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    //แสดงหนังสือบริจาร
     @GetMapping("/donation")
     public String getBooksByBookGiveTypeDonation(Model model) {
         model.addAttribute("books", bookService.getBooksByBookGiveTypeAndBookStatus(BookGiveType.DONATION_BOOK, BookStatus.AVAILABLE));

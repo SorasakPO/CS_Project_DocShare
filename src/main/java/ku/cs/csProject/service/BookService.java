@@ -2,6 +2,7 @@ package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
+import ku.cs.csProject.common.TransactionStatus;
 import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.entity.Transaction;
 import ku.cs.csProject.entity.User;
@@ -100,6 +101,7 @@ public class BookService {
         Transaction transaction = new Transaction();
         transaction.setBook(book);
         transaction.setRecipient(recipient);
+        transaction.setTransactionStatus(TransactionStatus.COMPLETED);
         transactionRepository.save(transaction);
     }
 
@@ -112,6 +114,7 @@ public class BookService {
         Transaction transaction = new Transaction();
         transaction.setBook(book);
         transaction.setRecipient(recipient);
+        transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         transactionRepository.save(transaction);
     }
 

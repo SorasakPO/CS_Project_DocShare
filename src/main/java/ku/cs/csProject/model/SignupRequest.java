@@ -17,6 +17,5 @@ public class SignupRequest {
 
     private String lineId;
 
-    private String facebookLink;
 
 }

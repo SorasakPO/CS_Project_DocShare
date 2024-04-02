@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+<div class="container">
+    <h1 class="display-5">ชั้นวางเอกสาร</h1>
+
+    <div class="dropdown" style="margin-bottom: 20px;">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            <span id="dropdownTitle">
+            <!-- ใช้ Thymeleaf expression เพื่อกำหนดชื่อของปุ่ม dropdown ตามค่าของพารามิเตอร์ type -->
+                <span th:if="${type == 'DONATION_BOOK'}">เอกสารบริจาค</span>
+                <span th:if="${type == 'LENDING_BOOK'}">เอกสารยืมคืน</span>
+            </span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" th:href="@{'/transactions/myShelf?type=DONATION_BOOK'}">เอกสารบริจาค</a></li>
+            <li><a class="dropdown-item" th:href="@{'/transactions/myShelf?type=LENDING_BOOK'}">เอกสารยืมคืน</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="tran : ${trans}">
+            <div class="card">
+                <img class="card-img-top" th:src="@{${'../uploads/' + tran.book.getBookImagePath()}}" alt="book image">
+                <div class="card-body">
+                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + tran.book.getBookName()}"></p>
+
+                    <div class="row">
+                        <form>
+                            <div class="mb-2" th:if="${type == 'LENDING_BOOK'}">
+                                <button class="btn btn-outline-secondary btn-block" type="button">คืนเอกสาร</button>
+                            </div>
+                            <button class="btn btn-outline-secondary btn-block" type="button" data-bs-toggle="modal"
+                                    th:data-bs-target="'#detailsModal-' + ${tran.book.getBookId()}">รายละเอียด
+                            </button>
+                        </form>
+                        <!-- Modal -->
+                        <div class="modal fade" th:id="'detailsModal-' + ${tran.book.getBookId()}" tabindex="-1"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <img class="card-img-top"
+                                                         th:src="@{'../uploads/' + ${tran.book.getBookImagePath()}}"
+                                                         alt="book image">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="fw-bold">ชื่อเอกสาร:</p>
+                                                    <p th:text="${tran.book.getBookName()}"></p>
+                                                    <p class="fw-bold">รายละเอียด:</p>
+                                                    <p th:text="${tran.book.getBookDes()}"></p>
+                                                    <!--                                                        <p class="fw-bold">ติดต่อ:</p>-->
+                                                    <!--                                                        <p th:text="${'โทร: ' + book.owner.getTelephoneNumber()}"></p>-->
+                                                    <div class="lineId">
+                                                        <p>
+                                                            <a th:href="'https://line.me/ti/p/~'+${tran.book.owner.getLineId()}"
+                                                               target="_blank" class="button-link">ติดต่อ</a>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

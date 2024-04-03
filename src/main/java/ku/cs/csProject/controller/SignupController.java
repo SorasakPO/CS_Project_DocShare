@@ -29,6 +29,11 @@ public class SignupController {
         return "signup";
     }
 
+    @GetMapping("/policy")
+    public String getPolicyPage() {
+        return "policy";
+    }
+
     @PostMapping("/signup")
     public String signupUser(@ModelAttribute SignupRequest user, @RequestParam("identificationImage") MultipartFile identificationImage, Model model) {
         if (signupService.isEmailAvailable(user.getEmail())) {

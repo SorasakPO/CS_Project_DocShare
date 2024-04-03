@@ -10,6 +10,9 @@
         .hidden {
             display: none;
         }
+        p {
+            color: red;
+        }
     </style>
 
 </head>
@@ -23,11 +26,13 @@
             <div class="mb-3">
                 <label for="lineId">ID Line</label>
                 <input id="lineId" type="text" class="form-control" name="lineId" maxlength="50" required>
+                <p>ข้อตกลง: ทางเว็บไซต์จะไม่รับผิดชอบความเสียหายใดๆที่เกิดจากปัญหาระหว่างผู้ใช้งานทั้งสิ้น เช่น ผู้ยืมทำเอกสารหายหรือชำรุด<br>
+                    แต่หากมีการไม่คืนเอกสารตามเวลาที่กำหนดแล้วหนีหาย ผู้ให้ยืมสามารถขอข้อมูลผู้ยืมทางเว็บไซต์เพื่อดำเนินคดีตามกฎหมายได้ </p>
             </div>
             <div class="mb-3">
                 <input type="checkbox" class="form-check-input" id="privacyPolicyCheck" required>
                 <label class="form-check-label" for="privacyPolicyCheck">
-                    ฉันยอมรับ <a href="#">นโยบาย</a>
+                    ฉันยอมรับข้อตกลง
                 </label>
             </div>
             <button id="register-button" type="submit" class="btn btn-primary">เริ่มเพิ่มเอกสาร</button>

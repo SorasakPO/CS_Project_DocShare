@@ -7,6 +7,8 @@
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
@@ -72,8 +74,10 @@
                         </div>
                         <div class="col-6">
                             <form th:action="@{/books/acceptLending}" method="POST">
-                                <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
-                                <button class="btn btn-primary btn-block" type="submit">ยืม</button>
+                                <button class="btn btn-primary btn-block" type="button"
+                                        th:data-book-id="${book.getBookId()}"
+                                        th:data-book-due-date="${book.getBookDueDate()}"
+                                        onclick="acceptBook(this)">ยืม</button>
                             </form>
                         </div>
                     </div>
@@ -82,5 +86,51 @@
         </div>
     </div>
 </div>
+<script>
+
+    async function acceptBook(button) {
+        var bookId = button.getAttribute('data-book-id');
+        var maxReturnDate = button.getAttribute('data-book-due-date');
+
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+
+        const { value: date } = await Swal.fire({
+            title: "ระบุวันที่คืนเอกสาร",
+            input: "date",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+            didOpen: () => {
+                const today = (new Date()).toISOString();
+                Swal.getInput().min = today.split("T")[0];
+                Swal.getInput().max = maxReturnDate;
+            }
+        });
+        if (date) {
+            Swal.fire({
+                title: "คุณแน่ใจหรือไม่ที่ต้องการยืมเอกสาร?",
+                showCancelButton: true,
+                cancelButtonText: "ยกเลิก",
+                reverseButtons: true,
+                confirmButtonText: "ยืนยัน",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden'
+                    input.name = 'bookReturnDate'
+                    input.value = date;
+                    form.appendChild(input);
+                    form.submit();
+                }
+            });
+        }
+    }
+</script>
 </body>
 </html>

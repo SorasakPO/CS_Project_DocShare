@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,14 +53,10 @@ public class BookService {
         Book record = modelMapper.map(request, Book.class);
         User user = userRepository.findByEmail(principal.getName());
 
-        // รับวันที่และเวลาปัจจุบัน
         LocalDateTime currentDateTime = LocalDateTime.now();
-        // กำหนดรูปแบบของวันที่และเวลา (รวมมิลลิวินาที)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSS_");
-        // สร้างชื่อไฟล์ใหม่
         String fileName =  formatter.format(currentDateTime) + StringUtils.cleanPath(bookImagePath.getOriginalFilename());
 
-        // บันทึกไฟล์ลงในที่เก็บไฟล์ (ตัวอย่าง: uploads/)
         try {
             String uploadDir = "src/main/resources/static/uploads/";
             Path uploadPath = Paths.get(uploadDir);
@@ -67,12 +64,6 @@ public class BookService {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-//            try (InputStream inputStream = bookImagePath.getInputStream()) {
-//                Path filePath = uploadPath.resolve(fileName);
-//                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             try {
                 byte[] bytes = bookImagePath.getBytes();
                 Path filePath = uploadPath.resolve(fileName);
@@ -98,14 +89,16 @@ public class BookService {
         Book book = bookRepository.findByBookId(bookId);
         book.setBookStatus(BookStatus.DONATED);
         bookRepository.save(book);
+
         Transaction transaction = new Transaction();
         transaction.setBook(book);
         transaction.setRecipient(recipient);
+        transaction.setBorrowDate(LocalDate.now());
         transaction.setTransactionStatus(TransactionStatus.COMPLETED);
         transactionRepository.save(transaction);
     }
 
-    public void acceptLending(UUID bookId, Principal principal) {
+    public void acceptLending(UUID bookId, String bookReturnDate, Principal principal) {
 
         User recipient = userRepository.findByEmail(principal.getName());
         Book book = bookRepository.findByBookId(bookId);
@@ -114,6 +107,10 @@ public class BookService {
         Transaction transaction = new Transaction();
         transaction.setBook(book);
         transaction.setRecipient(recipient);
+        transaction.setBorrowDate(LocalDate.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(bookReturnDate, formatter);
+        transaction.setReturnDate(localDate);
         transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         transactionRepository.save(transaction);
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Controller
@@ -46,12 +47,13 @@ public class BookController {
     @PostMapping("/acceptDonation")
     public String acceptDonation(@RequestParam UUID bookId, Principal principal) {
         bookService.acceptDonation(bookId, principal);
+        System.out.println(bookId);
         return "redirect:/books/donation";
     }
 
     @PostMapping("/acceptLending")
-    public String acceptLending(@RequestParam UUID bookId, Principal principal) {
-        bookService.acceptLending(bookId, principal);
+    public String acceptLending(@RequestParam UUID bookId, @RequestParam String bookReturnDate, Principal principal) {
+        bookService.acceptLending(bookId, bookReturnDate, principal);
         return "redirect:/books/lending";
     }
 }

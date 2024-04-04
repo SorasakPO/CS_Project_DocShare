@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS Project</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <script th:src="@{/js/bootstrap.min.js}"></script>
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 </head>
 <body>
@@ -72,10 +74,8 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <form th:action="@{/books/acceptDonation}" method="POST"
-                                  onsubmit="if(confirmDonation()) { showConfirmationAlert(); return true; } else { return false; }">
-                                <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
-                                <button class="btn btn-primary btn-block" type="submit">รับ</button>
+                            <form th:action="@{/books/acceptDonation}" method="POST">
+                                <button class="btn btn-primary btn-block" type="button" th:data-book-id="${book.getBookId()}" onclick="confirmDonation(this)">รับ</button>
                             </form>
                         </div>
                     </div>
@@ -85,13 +85,29 @@
     </div>
 </div>
 <script>
-    function confirmDonation() {
-        return confirm("คุณแน่ใจหรือไม่ที่ต้องการรับหนังสือนี้?");
+
+    function confirmDonation(button) {
+        var bookId = button.getAttribute('data-book-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณแน่ใจหรือไม่ที่ต้องการรับเอกสาร?",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     }
 
-    function showConfirmationAlert() {
-        alert("คุณได้ยืนยันการรับหนังสือแล้ว");
-    }
 </script>
 </body>
 </html>

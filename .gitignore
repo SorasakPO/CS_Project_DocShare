@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+###Customs###
+src/main/resources/static/identification/
+src/main/resources/static/uploads/

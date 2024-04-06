@@ -38,12 +38,12 @@
 
                     <div class="row">
                         <form>
+                            <button class="btn btn-outline-secondary btn-block mb-2" type="button" data-bs-toggle="modal"
+                                    th:data-bs-target="'#detailsModal-' + ${tran.book.getBookId()}">รายละเอียด
+                            </button>
                             <div class="mb-2" th:if="${type == 'LENDING_BOOK'}">
                                 <button class="btn btn-outline-secondary btn-block" type="button">คืนเอกสาร</button>
                             </div>
-                            <button class="btn btn-outline-secondary btn-block" type="button" data-bs-toggle="modal"
-                                    th:data-bs-target="'#detailsModal-' + ${tran.book.getBookId()}">รายละเอียด
-                            </button>
                         </form>
                         <!-- Modal -->
                         <div class="modal fade" th:id="'detailsModal-' + ${tran.book.getBookId()}" tabindex="-1"

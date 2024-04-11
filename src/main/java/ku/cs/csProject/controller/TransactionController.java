@@ -22,7 +22,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping("/myShelf")
-    public String getBooksByMyShelf(@RequestParam(name = "type", defaultValue = "DONATION_BOOK") String type, Model model, Principal principal) {
+    public String getBooksByMyShelf(@RequestParam(name = "type", defaultValue = "DONATION_BOOK") String type, Principal principal, Model model) {
 
         List<Transaction> transactions = transactionService.getTransactionByRecipientIdAndBookGiveType(principal, type);
         model.addAttribute("trans", transactions);

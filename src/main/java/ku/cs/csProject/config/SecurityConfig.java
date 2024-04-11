@@ -28,8 +28,10 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/customs/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/uploads/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/policy")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/books/myBook")).hasAnyAuthority(UserRole.ADMIN.name(), UserRole.LENDER.name())
 
                         .anyRequest().authenticated()
                 )

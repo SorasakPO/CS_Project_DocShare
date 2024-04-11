@@ -3,6 +3,7 @@ package ku.cs.csProject.service;
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.common.TransactionStatus;
+import ku.cs.csProject.common.UserRole;
 import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.entity.Transaction;
 import ku.cs.csProject.entity.User;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -56,26 +60,26 @@ public class BookService {
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSS_");
         String fileName =  formatter.format(currentDateTime) + StringUtils.cleanPath(bookImagePath.getOriginalFilename());
+        String uploadDir = "src/main/resources/static/uploads/";
 
         try {
-            String uploadDir = "src/main/resources/static/uploads/";
+
             Path uploadPath = Paths.get(uploadDir);
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            try {
-                byte[] bytes = bookImagePath.getBytes();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.write(filePath, bytes);
 
+            try {
+                Path fileNameAndPath = Paths.get(uploadDir, fileName);
+                Files.write(fileNameAndPath, bookImagePath.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         record.setBookGiveType(giveType.equals("DONATION") ? BookGiveType.DONATION_BOOK : BookGiveType.LENDING_BOOK);
         record.setBookImagePath(fileName);
         record.setOwner(user);
@@ -113,6 +117,27 @@ public class BookService {
         transaction.setReturnDate(localDate);
         transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         transactionRepository.save(transaction);
+    }
+
+    public void returnBook(UUID transactionId) {
+
+        Transaction transaction = transactionRepository.findByTransactionId(transactionId);
+        transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+        //transaction อาจจะมีวันที่คืนหนังสือจริงๆ
+        transactionRepository.save(transaction);
+
+        Book book = bookRepository.findByBookId(transaction.getBook().getBookId());
+        book.setBookStatus(BookStatus.AVAILABLE);
+        bookRepository.save(book);
+    }
+
+    public List<Book> getMyBook(Principal principal) {
+        User owner = userRepository.findByEmail(principal.getName());
+        if (owner.getUserRole() == UserRole.ADMIN){
+            return bookRepository.findAll();
+        }else {
+            return bookRepository.findByOwner(owner);
+        }
     }
 
 }

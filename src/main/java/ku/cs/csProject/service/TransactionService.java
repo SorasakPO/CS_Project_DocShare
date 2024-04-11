@@ -1,6 +1,7 @@
 package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.BookGiveType;
+import ku.cs.csProject.common.TransactionStatus;
 import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.entity.Transaction;
 import ku.cs.csProject.entity.User;
@@ -27,8 +28,11 @@ public class TransactionService {
     public List<Transaction> getTransactionByRecipientIdAndBookGiveType(Principal principal, String type) {
         User recipient = userRepository.findByEmail(principal.getName());
         BookGiveType bookGiveType = BookGiveType.valueOf(type);
-        return transactionRepository.findByRecipient_UserIDAndBook_BookGiveType(recipient.getUserID(), bookGiveType);
-
+        if (type.equals("DONATION_BOOK")) {
+            return transactionRepository.findByRecipient_UserIDAndBook_BookGiveType(recipient.getUserID(), bookGiveType);
+        }else {
+            return transactionRepository.findByRecipient_UserIDAndAndBook_BookGiveTypeAndAndTransactionStatus(recipient.getUserID(), bookGiveType, TransactionStatus.InPROCESS);
+        }
     }
 
 }

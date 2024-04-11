@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <style>
+        img {
+            max-width: 90px;
+            max-height: 90px;
+            width: auto;
+            height: auto;
+        }
+        .modal-text {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
+<div class="container">
+    <h1 class="display-5">จัดการเอกสาร</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ลำดับ</th>
+                <th scope="col">รูปเอกสาร</th>
+                <th scope="col">ชื่อเอกสาร</th>
+                <th scope="col">ประเภท</th>
+                <th scope="col">สถานะ</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="book, iterStat : ${books}">
+                <td align="center" th:text="${iterStat.count}"></td>
+                <td><img th:src="@{${'../uploads/' + book.getBookImagePath()}}" alt="book image"></td>
+                <td th:text="${book.getBookName()}"></td>
+                <td th:text="${book.getBookGiveType().name() == 'DONATION_BOOK' ? 'เอกสารบริจาค' : 'เอกสารยืมคืน'}"></td>
+                <td th:text="${book.getBookStatus().name() == 'AVAILABLE' ? 'พร้อมใช้งาน' : (book.getBookStatus().name() == 'BORROWED' ? 'ถูกยืม' : 'ถูกบริจาค')}"
+                    th:style="${book.getBookStatus().name() == 'AVAILABLE' ? 'color: green;' : (book.getBookStatus().name() == 'BORROWED' ? 'color: red;' : 'color: red;')}"></td>
+                <td>
+
+                    <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${book.getBookId()}">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm"><i class="fa-solid fa-pen" ></i></button>
+                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                </td>
+
+                <div class="modal fade" th:id="'detailsModal-' + ${book.getBookId()}" tabindex="-1"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img class="card-img-top"
+                                             th:src="@{'../uploads/' + ${book.getBookImagePath()}}"
+                                             alt="book image">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="fw-bold">ชื่อเอกสาร:</p>
+                                        <p class="modal-text" th:text="${book.getBookName()}"></p>
+                                        <p class="fw-bold">รายละเอียด:</p>
+                                        <p class="modal-text" th:text="${book.getBookDes()}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 100%;">
+                                    ปิด
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

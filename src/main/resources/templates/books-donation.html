@@ -15,11 +15,11 @@
 <div class="container">
     <h1 class="display-5">เอกสารบริจาค</h1>
     <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="book,iterStat : ${books}">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="book : ${books}">
             <div class="card">
                 <img class="card-img-top" th:src="@{${'../uploads/' + book.getBookImagePath()}}" alt="book image">
                 <div class="card-body">
-                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + book.getBookName()}"></p>
+                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + (book.getBookName().length > 20 ? book.getBookName().substring(0, 20) + '...' : book.getBookName())}"></p>
                     <div class="row">
                         <div class="col-6">
                             <form>

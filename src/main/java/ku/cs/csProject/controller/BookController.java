@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +27,7 @@ public class BookController {
 
     @GetMapping("/donation")
     public String getBooksByBookGiveTypeDonation(Model model) {
-        List<Book> books = bookService.getBooksByBookGiveTypeAndBookStatus(BookGiveType.DONATION_BOOK, BookStatus.AVAILABLE);
-        model.addAttribute("books", books);
+        model.addAttribute("books", bookService.getBooksByBookGiveTypeAndBookStatus(BookGiveType.DONATION_BOOK, BookStatus.AVAILABLE));
         return "books-donation";
     }
 
@@ -72,4 +72,30 @@ public class BookController {
         model.addAttribute("books", bookService.getMyBook(principal));
         return "book-management";
     }
+
+    @GetMapping("/edit")
+    public String getEditBook(@RequestParam UUID bookId, Model model) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        model.addAttribute("book", bookService.getBookByBookId(bookId));
+        if (bookService.getBookByBookId(bookId).getBookDueDate() != null) {
+            String formattedDate = bookService.getBookByBookId(bookId).getBookDueDate().format(formatter);
+            model.addAttribute("formattedDueDate", formattedDate);
+        }
+        return "book-edit";
+    }
+
+    @PostMapping("/editBookData")
+    public String editBook(@RequestParam("bookId") UUID bookId, @ModelAttribute BookRequest bookRequest, @RequestParam("giveType") String giveType, @RequestParam(value = "bookImagePath", required = false) MultipartFile bookImagePath) {
+        bookService.editBookData(bookId, bookRequest, giveType, bookImagePath);
+        return "redirect:/books/edit?bookId=" + bookId.toString();
+    }
+
+    @PostMapping("/deleteBook")
+    public String deleteBook(@RequestParam("bookId") UUID bookId) {
+        bookService.deleteBook(bookId);
+        return "redirect:/books/myBook";
+    }
+
 }

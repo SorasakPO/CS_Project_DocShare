@@ -36,7 +36,7 @@
             <div class="card">
                 <img class="card-img-top" th:src="@{${'../uploads/' + tran.book.getBookImagePath()}}" alt="book image">
                 <div class="card-body">
-                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + tran.book.getBookName()}"></p>
+                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + (tran.book.getBookName().length > 20 ? tran.book.getBookName().substring(0, 20) + '...' : tran.book.getBookName())}"></p>
 
                     <div class="row">
                         <form>
@@ -100,6 +100,7 @@
 </div>
 <script>
     function returnBook(button) {
+
         var transactionId = button.getAttribute('data-transaction-id');
         var form = button.closest('form');
         var input = document.createElement('input');

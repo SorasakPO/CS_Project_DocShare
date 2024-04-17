@@ -35,17 +35,17 @@
                 <th scope="col">ลำดับ</th>
                 <th scope="col">รูปเอกสาร</th>
                 <th scope="col">ชื่อเอกสาร</th>
-                <th scope="col">ประเภท</th>
+                <th scope="col">ประเภทเอกสาร</th>
                 <th scope="col">สถานะ</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="book, iterStat : ${books}">
-                <td align="center" th:text="${iterStat.count}"></td>
+                <td th:text="${iterStat.count}"></td>
                 <td><img th:src="@{${'../uploads/' + book.getBookImagePath()}}" alt="book image"></td>
-                <td th:text="${book.getBookName()}"></td>
-                <td th:text="${book.getBookGiveType().name() == 'DONATION_BOOK' ? 'เอกสารบริจาค' : 'เอกสารยืมคืน'}"></td>
+                <td th:text="${(book.getBookName().length > 20 ? book.getBookName().substring(0, 20) + '...' : book.getBookName())}"></td>
+                <td th:text="${book.getBookGiveType().name() == 'DONATION_BOOK' ? 'บริจาค' : 'ยืม-คืน'}"></td>
                 <td th:text="${book.getBookStatus().name() == 'AVAILABLE' ? 'พร้อมใช้งาน' : (book.getBookStatus().name() == 'BORROWED' ? 'ถูกยืม' : 'ถูกบริจาค')}"
                     th:style="${book.getBookStatus().name() == 'AVAILABLE' ? 'color: green;' : (book.getBookStatus().name() == 'BORROWED' ? 'color: red;' : 'color: red;')}"></td>
                 <td>
@@ -53,8 +53,15 @@
                     <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${book.getBookId()}">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm"><i class="fa-solid fa-pen" ></i></button>
-                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+
+                    <form th:action="@{/books/edit}" method="GET" style="display: inline;">
+                        <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
+                        <button class="btn btn-primary btn-sm" type="submit"><i class="fa-solid fa-pen"></i></button>
+                    </form>
+
+                    <form th:action="@{/books/deleteBook}" method="POST" style="display: inline;">
+                        <button class="btn btn-danger btn-sm" type="button" th:data-book-id="${book.getBookId()}" onclick="confirmDelete(this)"><i class="fa-solid fa-trash"></i></button>
+                    </form>
                 </td>
 
                 <div class="modal fade" th:id="'detailsModal-' + ${book.getBookId()}" tabindex="-1"
@@ -94,5 +101,28 @@
         </tbody>
     </table>
 </div>
+<script>
+    function confirmDelete(button) {
+        var bookId = button.getAttribute('data-book-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณแน่ใจหรือไม่ที่ต้องลบเอกสาร?",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+</script>
 </body>
 </html>

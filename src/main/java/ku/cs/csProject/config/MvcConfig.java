@@ -12,5 +12,9 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceHandler("/uploads/**") // เรียกใช้งานที่อยู่ uploads ด้วย URL ที่ตรงกับ /uploads/**
                 .addResourceLocations("file:src/main/resources/static/uploads/") // ระบุที่อยู่ของไฟล์ uploads ในโฟลเดอร์แห่งนี้
                 .setCachePeriod(0); // ไม่ใช้แคช
+        registry
+                .addResourceHandler("/identification/**")
+                .addResourceLocations("file:src/main/resources/static/identification/")
+                .setCachePeriod(0);
     }
 }

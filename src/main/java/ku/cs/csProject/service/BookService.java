@@ -27,9 +27,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -140,4 +142,59 @@ public class BookService {
         }
     }
 
+    public Book getBookByBookId(UUID bookId) {
+        return bookRepository.findByBookId(bookId);
+    }
+
+    public void editBookData(UUID bookId, BookRequest request, String giveType, MultipartFile bookImagePath){
+        Book book = bookRepository.findByBookId(bookId);
+
+        book.setBookName(request.getBookName());
+        book.setBookDes(request.getBookDes());
+        if (giveType.equals("DONATION")){
+            book.setBookGiveType(BookGiveType.DONATION_BOOK);
+            book.setBookDueDate(null);
+        }else {
+            book.setBookGiveType(BookGiveType.LENDING_BOOK);
+            book.setBookDueDate(request.getBookDueDate());
+        }
+        if (!bookImagePath.isEmpty()){
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSS_");
+            String fileName =  formatter.format(currentDateTime) + StringUtils.cleanPath(bookImagePath.getOriginalFilename());
+            String uploadDir = "src/main/resources/static/uploads/";
+
+            // ลบรูปภาพเก่า (ถ้ามี)
+            if (book.getBookImagePath() != null && !book.getBookImagePath().isEmpty()) {
+                String oldImagePath = uploadDir + book.getBookImagePath();
+                File oldImageFile = new File(oldImagePath);
+                if (oldImageFile.exists()) {
+                    oldImageFile.delete();
+                }
+            }
+
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                try {
+                    Path fileNameAndPath = Paths.get(uploadDir, fileName);
+                    Files.write(fileNameAndPath, bookImagePath.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            book.setBookImagePath(fileName);
+        }
+
+        bookRepository.save(book);
+    }
+
+    public void deleteBook(UUID bookId) {
+        bookRepository.deleteById(bookId);
+    }
 }

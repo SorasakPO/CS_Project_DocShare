@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+
+        .col-6 img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 350px;
+            height: auto;
+        }
+
+        .new-line {
+            display: block;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
+<div class="container">
+    <h1 class="display-5">แก้ไขเอกสาร</h1>
+    <div class="row">
+        <div class="col-6">
+            <img id="previewImage" th:src="@{${'../uploads/' + book.getBookImagePath()}}" alt="book image" th:data-book-img-name="${book.getBookImagePath()}">
+            <div id="editImageSection">
+                <div class="mb-3 mt-4 text-center">
+                    <input type="file" id="fileInput" style="display: none;" accept="image/*"/>
+                    <button class="btn btn-primary" id="chooseImageButton">เลือกรูป</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <h2>ข้อมูลหนังสือ</h2>
+            <div id="dataSection">
+                <p><span class="fw-bold">ชื่อเอกสาร: </span><span class="new-line" th:text="${book.getBookName()}"></span></p>
+                <p><span class="fw-bold">รายละเอียดเอกสาร: </span><span class="new-line" th:text="${book.getBookDes()}" style="overflow-wrap: break-word; white-space: pre-wrap;"></span></p>
+                <p><span class="fw-bold">ประเภทเอกสาร: </span><span class="new-line" th:text="${book.getBookGiveType().name() == 'DONATION_BOOK' ? 'บริจาค' : 'ยืม-คืน'}"></span></p>
+                <p th:if="${book.getBookGiveType().name() == 'LENDING_BOOK'}">
+                    <span class="fw-bold">วันที่ครบกำหนดคืน: </span><span class="new-line" th:text="${formattedDueDate}"></span>
+                </p>
+            </div>
+            <div id="editSection">
+                <form th:action="@{/books/editBookData}" method="POST" enctype="multipart/form-data">
+
+                    <input type="hidden" id="bookId" name="bookId" th:value="${book.getBookId()}"/>
+                    <input type="file" id="bookImagePath" style="display: none;" name="bookImagePath" accept="image/*"/>
+
+                    <div class="mb-3">
+                        <label for="bookName">ชื่อเอกสาร</label>
+                        <input id="bookName" type="input" class="form-control" name="bookName" maxlength="50" th:value="${book.getBookName()}" th:attr="data-book-name-th=${book.getBookName()}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookDes">รายละเอียดเอกสาร</label>
+                        <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" th:text="${book.getBookDes()}" th:attr="data-book-des-th=${book.getBookDes()}" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <p style="margin: 0;">ประเภทเอกสาร</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="giveType" id="flexRadioDefault1" value="DONATION" th:checked="${book.getBookGiveType().name() == 'DONATION_BOOK'}">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                บริจาค
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="giveType" id="flexRadioDefault2" value="LENDING" th:checked="${book.getBookGiveType().name() == 'LENDING_BOOK'}">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                ยืมคืน
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3" id="dateSection">
+                        <label for="bookDueDate">วันที่ครบกำหนดคืน</label><br>
+                        <input type="date" id="bookDueDate" name="bookDueDate" th:value="${book.bookDueDate}">
+                    </div>
+
+                    <div class="row mb-3">
+                        <button type="button" class="btn btn-outline-secondary col-2 mx-2" id="cancelButton">ยกเลิก</button>
+                        <button type="submit" class="btn btn-success col-2 mx-2" id="submitButton">บันทึก</button>
+                    </div>
+
+                </form>
+            </div>
+            <div class="row-cols-3 mt-4 mb-4">
+                <button class="btn btn-outline-primary" id="editButton" >แก้ไขข้อมูลเอกสาร</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // รับวันที่ปัจจุบัน
+        var today = new Date().toISOString().split('T')[0];
+        // กำหนดวันที่ขั้นต่ำให้กับ input type="date"
+        $('#bookDueDate').attr('min', today);
+
+
+
+        // เมื่อเริ่มหน้ามาให้ซ่อน editSection
+        $('#editSection').hide();
+        $('#editImageSection').hide();
+
+
+        // กำหนดการทำงานเมื่อคลิกที่ปุ่ม "แก้ไขข้อมูลเอกสาร"
+        $('#editButton').click(function(){
+            // ซ่อน dataSection และแสดง editSection
+            $('#dataSection').hide();
+            $('#editButton').hide();
+            $('#editSection').show();
+            $('#editImageSection').show();
+
+            // เช็คค่าของ radio buttons เมื่อคลิกที่ปุ่ม "แก้ไขข้อมูลเอกสาร"
+            if ($('#flexRadioDefault1').is(':checked')) {
+                // ถ้า flexRadioDefault1 ถูกเลือก ให้ซ่อน #dateSection
+                $('#dateSection').hide();
+            } else if ($('#flexRadioDefault2').is(':checked')) {
+                // ถ้า flexRadioDefault2 ถูกเลือก ให้แสดง #dateSection
+                $('#dateSection').show();
+            }
+        });
+
+        $('#cancelButton').click(function(){
+
+            // รับค่าจาก Thymeleaf expression และกำหนดค่าให้กับ input elements ในฟอร์ม
+            var bookName = $('#bookName').attr('data-book-name-th');
+            var bookDes = $('#bookDes').attr('data-book-des-th');
+            var bookImg = $('#previewImage').attr('data-book-img-name');
+
+            $('#bookName').val(bookName);
+            $('#bookDes').val(bookDes);
+            $('#bookImagePath').val(null);
+
+            // รีเซ็ต radio buttons ตามประเภทเอกสารเดิม
+            if ('[[${book.getBookGiveType().name()}]]' === 'DONATION_BOOK') {
+                $('#flexRadioDefault1').prop('checked', true);
+            } else {
+                $('#flexRadioDefault2').prop('checked', true);
+            }
+
+            // รีเซ็ต input field ของวันที่ครบกำหนดคืน (หากมี)
+            $('#bookDueDate').val(`[[${book.bookDueDate}]]`);
+
+            // แสดงข้อมูลเอกสารและปุ่มแก้ไขข้อมูลเอกสาร
+            $('#dataSection').show();
+            $('#editButton').show();
+
+            // ซ่อนส่วนแก้ไขข้อมูลเอกสาร
+            $('#editSection').hide();
+
+            $('#editImageSection').hide();
+
+            // รีเซ็ตค่าของ <img> ให้กลับไปเป็นรูปเดิม
+            $('#previewImage').attr('src', '../uploads/' + bookImg);
+
+        });
+
+        // เมื่อมีการเปลี่ยนแปลงใน radio buttons
+        $('input[name="giveType"]').change(function(){
+            if ($(this).attr('id') === 'flexRadioDefault1') {
+                // ถ้า flexRadioDefault1 ถูกเลือก ให้ซ่อน #dateSection
+                $('#dateSection').hide();
+            } else if ($(this).attr('id') === 'flexRadioDefault2') {
+                // ถ้า flexRadioDefault2 ถูกเลือก ให้แสดง #dateSection
+                $('#dateSection').show();
+                $('#bookDueDate').prop('required', true); // บังคับให้ใส่วันที่ครบกำหนดคืน
+            }
+        });
+
+        $('#chooseImageButton').click(function() {
+            $('#fileInput').click();
+        });
+
+        // ฟังก์ชันที่ถูกเรียกเมื่อมีการเลือกไฟล์
+        $('#fileInput').change(function(event){
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function(){
+                var dataURL = reader.result;
+                $('#previewImage').attr('src', dataURL); // แสดงตัวอย่างรูปภาพที่เลือกใน <img>
+            };
+            reader.readAsDataURL(input.files[0]);
+
+            // เมื่อไฟล์ถูกเลือก ให้กำหนดค่าของ input[type=file] ที่ซ่อนไว้ให้เท่ากับไฟล์ที่เลือก
+            var file = input.files[0];
+            $('#bookImagePath')[0].files = input.files;
+        });
+
+    });
+
+</script>
+</body>
+</html>

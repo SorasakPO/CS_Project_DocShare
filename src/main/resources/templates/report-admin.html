@@ -42,13 +42,13 @@
         <tbody>
         <tr th:each="report, iterStat : ${reports}">
             <td th:text="${report.getReportDate()}"></td>
-            <td th:text="${report.getReportDetail()}"></td>
+            <td th:text="${(report.getReportDetail().length > 30 ? report.getReportDetail().substring(0, 30) + '...' : report.getReportDetail())}"></td>
             <td th:text="${report.reportUser.getFirstName()+' '+report.reportUser.getLastName()}"></td>
             <td th:text="${report.getReportStatus().name() == 'PENDING' ? 'รอดำเนินงาน' : (report.getReportStatus().name() == 'COMPLETED' ? 'เสร็จแล้ว' : 'เสร็จแล้ว')}"
                 th:style="${report.getReportStatus().name() == 'PENDING' ? 'color: red;' : (report.getReportStatus().name() == 'COMPLETED' ? 'color: green;' : 'color: green;')}"></td>
             <td>
 
-                <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${report.book.getBookId()}">
+                <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${report.getReportId()}">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
 
@@ -61,18 +61,18 @@
                 </form>
             </td>
 
-            <div class="modal fade" th:id="'detailsModal-' + ${report.book.getBookId()}" tabindex="-1"
+            <div class="modal fade" th:id="'detailsModal-' + ${report.getReportId()}" tabindex="-1"
                  aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">รายละเอียดรายงาน</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="row">
+                            <div class="row" th:id="'detailsModal-' + ${report.book.getBookId()}">
                                 <div class="col-md-6">
                                     <img class="card-img-top"
                                          th:src="@{'../uploads/' + ${report.book.getBookImagePath()}}"
@@ -83,6 +83,12 @@
                                     <p class="modal-text" th:text="${report.book.getBookName()}"></p>
                                     <p class="fw-bold">รายละเอียด:</p>
                                     <p class="modal-text" th:text="${report.book.getBookDes()}"></p>
+                                </div>
+                            </div>
+                            <div class="row mt-3" style="border-top: 1px groove #a7acb1;">
+                                <div class="col">
+                                    <p class="fw-bold">เหตุผลของการรายงาน:</p>
+                                    <p class="modal-text" th:text="${report.getReportDetail()}"></p>
                                 </div>
                             </div>
                         </div>

@@ -1,14 +1,17 @@
 package ku.cs.csProject.service;
 
+import ku.cs.csProject.common.*;
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.common.TransactionStatus;
 import ku.cs.csProject.common.UserRole;
 import ku.cs.csProject.entity.Book;
+import ku.cs.csProject.entity.Report;
 import ku.cs.csProject.entity.Transaction;
 import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.repository.BookRepository;
+import ku.cs.csProject.repository.ReportRepository;
 import ku.cs.csProject.repository.TransactionRepository;
 import ku.cs.csProject.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -49,6 +52,9 @@ public class BookService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
     public List<Book> getBooksByBookGiveTypeAndBookStatus(BookGiveType bookGiveType, BookStatus bookStatus) {
         return bookRepository.findByBookGiveTypeAndBookStatus(bookGiveType, bookStatus);
@@ -119,6 +125,23 @@ public class BookService {
         transaction.setReturnDate(localDate);
         transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         transactionRepository.save(transaction);
+    }
+
+    public String reportBook(UUID bookId, String reportDetail, Principal principal) {
+        User reportUser = userRepository.findByEmail(principal.getName());
+        Book book = bookRepository.findByBookId(bookId);
+        Report report = new Report();
+        report.setBook(book);
+        report.setReportUser(reportUser);
+        report.setReportDetail(reportDetail);
+        report.setReportDate(LocalDate.now());
+        report.setReportStatus(ReportStatus.PENDING);
+        reportRepository.save(report);
+        if(book.getBookGiveType().name().equals("DONATION_BOOK")){
+            return "donation";
+        } else {
+            return "lending";
+        }
     }
 
     public void returnBook(UUID transactionId) {
@@ -197,4 +220,5 @@ public class BookService {
     public void deleteBook(UUID bookId) {
         bookRepository.deleteById(bookId);
     }
+
 }

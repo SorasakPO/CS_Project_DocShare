@@ -8,8 +8,16 @@
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script src="https://kit.fontawesome.com/07c019ece4.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        button {
+            padding: 5px;
+            background: #FFFFFF;
+            border: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
@@ -56,8 +64,6 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="container-fluid">
@@ -99,6 +105,7 @@
     </div>
 </div>
 <script>
+
     function returnBook(button) {
 
         var transactionId = button.getAttribute('data-transaction-id');
@@ -122,6 +129,7 @@
         });
 
     }
+
 </script>
 </body>
 </html>

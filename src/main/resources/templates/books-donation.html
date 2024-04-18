@@ -9,6 +9,14 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/07c019ece4.js" crossorigin="anonymous"></script>
+    <style>
+        button {
+            padding: 5px;
+            background: #FFFFFF;
+            border: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
@@ -35,8 +43,15 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                            <form th:action="@{/books/reportBook}" method="POST">
+                                                <button type="button"
+                                                        data-bs-dismiss="modal"
+                                                        th:data-book-id="${book.getBookId()}"
+                                                        onclick="reportBook(this)">
+                                                    <i class="fa-solid fa-circle-exclamation fa-lg"></i>
+                                                    <!--                                                    <img src="https://media.istockphoto.com/id/1163581975/vector/warning-danger-sign-triangle-frame-yellow-and-black-color-background.jpg?s=612x612&w=0&k=20&c=UsONAgKo9RG5MbkNFUgTNMP06oMh_ibBHjzgGaBhOpI=" alt="buttonpng"/>-->
+                                                </button>
+                                            </form>
                                         </div>
                                         <div class="modal-body">
                                             <div class="container-fluid">
@@ -104,6 +119,50 @@
                 form.submit();
             }
         });
+    }
+
+    async function reportBook(button) {
+        var bookId = button.getAttribute('data-book-id');
+        // var userId = button.getAttribute('data-user-id');
+
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+        // input.type = 'hidden'
+        // input.name = 'userId'
+        // input.value = userId;
+        // form.appendChild(input);
+
+        const { value: text } = await Swal.fire({
+            input: "textarea",
+            inputLabel: "รายงานเอกสาร",
+            inputPlaceholder: "ใส่เหตุผลการรายงาน...",
+            inputAttributes: {
+                "aria-label": "Type your message here"
+            },
+            showCancelButton: true
+        });
+        if (text) {
+            Swal.fire({
+                title: "คุณแน่ใจหรือไม่ที่ต้องการรายงานเอกสารนี้?",
+                showCancelButton: true,
+                cancelButtonText: "ยกเลิก",
+                reverseButtons: true,
+                confirmButtonText: "ยืนยัน",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden'
+                    input.name = 'reportDetail'
+                    input.value = text;
+                    form.appendChild(input);
+                    form.submit();
+                }
+            });
+        }
     }
 
 </script>

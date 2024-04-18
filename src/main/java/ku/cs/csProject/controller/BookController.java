@@ -2,7 +2,6 @@ package ku.cs.csProject.controller;
 
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
-import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -59,6 +55,12 @@ public class BookController {
     public String acceptLending(@RequestParam UUID bookId, @RequestParam String bookReturnDate, Principal principal) {
         bookService.acceptLending(bookId, bookReturnDate, principal);
         return "redirect:/books/lending";
+    }
+
+    @PostMapping("/reportBook")
+    public String reportBook(@RequestParam UUID bookId,String reportDetail,Principal principal) {
+        String path = bookService.reportBook(bookId, reportDetail, principal);
+        return "redirect:/books/"+path;
     }
 
     @PostMapping("/returnBook")

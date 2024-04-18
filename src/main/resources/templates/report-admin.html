@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Project</title>
+    <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <style>
+        img {
+            max-width: 90px;
+            max-height: 90px;
+            width: auto;
+            height: auto;
+        }
+        .modal-text {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
+<div class="container">
+    <h1 class="display-5">จัดการรายงาน</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">วันที่รายงาน</th>
+            <th scope="col">เหตุผลของการรายงาน</th>
+            <th scope="col">ผู้รายงาน</th>
+            <th scope="col">สถานะ</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report, iterStat : ${reports}">
+            <td th:text="${report.getReportDate()}"></td>
+            <td th:text="${report.getReportDetail()}"></td>
+            <td th:text="${report.reportUser.getFirstName()+' '+report.reportUser.getLastName()}"></td>
+            <td th:text="${report.getReportStatus().name() == 'PENDING' ? 'รอดำเนินงาน' : (report.getReportStatus().name() == 'COMPLETED' ? 'เสร็จแล้ว' : 'เสร็จแล้ว')}"
+                th:style="${report.getReportStatus().name() == 'PENDING' ? 'color: red;' : (report.getReportStatus().name() == 'COMPLETED' ? 'color: green;' : 'color: green;')}"></td>
+            <td>
+
+                <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${report.book.getBookId()}">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+                <form th:action="@{/reports/changeStatus}" method="POST" style="display: inline;">
+                    <button class="btn btn-primary btn-sm" type="button" th:data-report-id="${report.getReportId()}" onclick="changeStatus(this)"><i class="fa-solid fa-pen" ></i></button>
+                </form>
+
+                <form th:action="@{/reports/deleteReport}" method="POST" style="display: inline;">
+                    <button class="btn btn-danger btn-sm" type="button" th:data-report-id="${report.getReportId()}" onclick="confirmDelete(this)"><i class="fa-solid fa-trash"></i></button>
+                </form>
+            </td>
+
+            <div class="modal fade" th:id="'detailsModal-' + ${report.book.getBookId()}" tabindex="-1"
+                 aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img class="card-img-top"
+                                         th:src="@{'../uploads/' + ${report.book.getBookImagePath()}}"
+                                         alt="book image">
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="fw-bold">ชื่อเอกสาร:</p>
+                                    <p class="modal-text" th:text="${report.book.getBookName()}"></p>
+                                    <p class="fw-bold">รายละเอียด:</p>
+                                    <p class="modal-text" th:text="${report.book.getBookDes()}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 100%;">
+                                ปิด
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function confirmDelete(button) {
+        var reportId = button.getAttribute('data-report-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'reportId'
+        input.value = reportId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณแน่ใจหรือไม่ที่ต้องลบรายงาน?",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+
+    function changeStatus(button) {
+        var reportId = button.getAttribute('data-report-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'reportId'
+        input.value = reportId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณต้องการเปลี่ยนสถานะหรือไม่?",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+</script>
+</body>
+</html>

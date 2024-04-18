@@ -6,18 +6,16 @@
     <title>CS Project</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
     <style>
         .hidden {
             display: none;
-        }
-        p {
-            color: red;
         }
     </style>
 
 </head>
 <body>
-<div th:insert="~{fragments/header :: header}"></div>
+<div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
 <div class="container">
     <h1 class="display-5">เพิ่มเอกสาร</h1>
     <div sec:authorize="(hasAuthority('BORROWER'))">
@@ -48,16 +46,15 @@
 
             <div class="mb-3">
                 <label for="bookDes">รายละเอียด</label>
-                <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200"
-                          accept="image/*"
-                          required></textarea>
+                <textarea id="bookDes" class="form-control" name="bookDes" minlength="40" maxlength="200" required></textarea>
             </div>
 
             <div class="mb-3">
                 <label for="bookImagePath">รูปเอกสาร</label>
                 <div style="display: flex; justify-content: center;">
-                    <input id="bookImagePath" type="file" class="form-control" name="bookImagePath" required>
+                    <input id="bookImagePath" type="file" class="form-control" name="bookImagePath" accept="image/*"  required>
                 </div>
+                <p style="color: red">รอบรับไฟล์: png, jpg, jpeg ขนาดไม่เกิน 5 MB</p>
             </div>
 
             <p>เลือกรูปแบบการให้</p>

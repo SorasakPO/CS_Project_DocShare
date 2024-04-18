@@ -1,5 +1,7 @@
 package ku.cs.csProject.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.model.BookRequest;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Controller
@@ -56,4 +58,48 @@ public class BookController {
         bookService.acceptLending(bookId, bookReturnDate, principal);
         return "redirect:/books/lending";
     }
+
+    @PostMapping("/reportBook")
+    public String reportBook(@RequestParam UUID bookId,String reportDetail,Principal principal) {
+        String path = bookService.reportBook(bookId, reportDetail, principal);
+        return "redirect:/books/"+path;
+    }
+
+    @PostMapping("/returnBook")
+    public String returnBook(@RequestParam UUID transactionId) {
+        bookService.returnBook(transactionId);
+        return "redirect:/transactions/myShelf?type=LENDING_BOOK";
+    }
+
+    @GetMapping("/myBook")
+    public String getMyBook(Principal principal, Model model){
+        model.addAttribute("books", bookService.getMyBook(principal));
+        return "book-management";
+    }
+
+    @GetMapping("/edit")
+    public String getEditBook(@RequestParam UUID bookId, Model model) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        model.addAttribute("book", bookService.getBookByBookId(bookId));
+        if (bookService.getBookByBookId(bookId).getBookDueDate() != null) {
+            String formattedDate = bookService.getBookByBookId(bookId).getBookDueDate().format(formatter);
+            model.addAttribute("formattedDueDate", formattedDate);
+        }
+        return "book-edit";
+    }
+
+    @PostMapping("/editBookData")
+    public String editBook(@RequestParam("bookId") UUID bookId, @ModelAttribute BookRequest bookRequest, @RequestParam("giveType") String giveType, @RequestParam(value = "bookImagePath", required = false) MultipartFile bookImagePath) {
+        bookService.editBookData(bookId, bookRequest, giveType, bookImagePath);
+        return "redirect:/books/edit?bookId=" + bookId.toString();
+    }
+
+    @PostMapping("/deleteBook")
+    public String deleteBook(@RequestParam("bookId") UUID bookId) {
+        bookService.deleteBook(bookId);
+        return "redirect:/books/myBook";
+    }
+
 }

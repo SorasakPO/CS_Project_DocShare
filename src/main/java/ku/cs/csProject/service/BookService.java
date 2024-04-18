@@ -1,13 +1,13 @@
 package ku.cs.csProject.service;
 
-import ku.cs.csProject.common.BookGiveType;
-import ku.cs.csProject.common.BookStatus;
-import ku.cs.csProject.common.TransactionStatus;
+import ku.cs.csProject.common.*;
 import ku.cs.csProject.entity.Book;
+import ku.cs.csProject.entity.Report;
 import ku.cs.csProject.entity.Transaction;
 import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.repository.BookRepository;
+import ku.cs.csProject.repository.ReportRepository;
 import ku.cs.csProject.repository.TransactionRepository;
 import ku.cs.csProject.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -23,9 +26,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +49,9 @@ public class BookService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private ReportRepository reportRepository;
+
     public List<Book> getBooksByBookGiveTypeAndBookStatus(BookGiveType bookGiveType, BookStatus bookStatus) {
         return bookRepository.findByBookGiveTypeAndBookStatus(bookGiveType, bookStatus);
     }
@@ -56,26 +64,26 @@ public class BookService {
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSS_");
         String fileName =  formatter.format(currentDateTime) + StringUtils.cleanPath(bookImagePath.getOriginalFilename());
+        String uploadDir = "src/main/resources/static/uploads/";
 
         try {
-            String uploadDir = "src/main/resources/static/uploads/";
+
             Path uploadPath = Paths.get(uploadDir);
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            try {
-                byte[] bytes = bookImagePath.getBytes();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.write(filePath, bytes);
 
+            try {
+                Path fileNameAndPath = Paths.get(uploadDir, fileName);
+                Files.write(fileNameAndPath, bookImagePath.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         record.setBookGiveType(giveType.equals("DONATION") ? BookGiveType.DONATION_BOOK : BookGiveType.LENDING_BOOK);
         record.setBookImagePath(fileName);
         record.setOwner(user);
@@ -113,6 +121,100 @@ public class BookService {
         transaction.setReturnDate(localDate);
         transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         transactionRepository.save(transaction);
+    }
+
+    public String reportBook(UUID bookId, String reportDetail, Principal principal) {
+        User reportUser = userRepository.findByEmail(principal.getName());
+        Book book = bookRepository.findByBookId(bookId);
+        Report report = new Report();
+        report.setBook(book);
+        report.setReportUser(reportUser);
+        report.setReportDetail(reportDetail);
+        report.setReportDate(LocalDate.now());
+        report.setReportStatus(ReportStatus.PENDING);
+        reportRepository.save(report);
+        if(book.getBookGiveType().name().equals("DONATION_BOOK")){
+            return "donation";
+        } else {
+            return "lending";
+        }
+    }
+
+    public void returnBook(UUID transactionId) {
+
+        Transaction transaction = transactionRepository.findByTransactionId(transactionId);
+        transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+        //transaction อาจจะมีวันที่คืนหนังสือจริงๆ
+        transactionRepository.save(transaction);
+
+        Book book = bookRepository.findByBookId(transaction.getBook().getBookId());
+        book.setBookStatus(BookStatus.AVAILABLE);
+        bookRepository.save(book);
+    }
+
+    public List<Book> getMyBook(Principal principal) {
+        User owner = userRepository.findByEmail(principal.getName());
+        if (owner.getUserRole() == UserRole.ADMIN){
+            return bookRepository.findAll();
+        }else {
+            return bookRepository.findByOwner(owner);
+        }
+    }
+
+    public Book getBookByBookId(UUID bookId) {
+        return bookRepository.findByBookId(bookId);
+    }
+
+    public void editBookData(UUID bookId, BookRequest request, String giveType, MultipartFile bookImagePath){
+        Book book = bookRepository.findByBookId(bookId);
+
+        book.setBookName(request.getBookName());
+        book.setBookDes(request.getBookDes());
+        if (giveType.equals("DONATION")){
+            book.setBookGiveType(BookGiveType.DONATION_BOOK);
+            book.setBookDueDate(null);
+        }else {
+            book.setBookGiveType(BookGiveType.LENDING_BOOK);
+            book.setBookDueDate(request.getBookDueDate());
+        }
+        if (!bookImagePath.isEmpty()){
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSS_");
+            String fileName =  formatter.format(currentDateTime) + StringUtils.cleanPath(bookImagePath.getOriginalFilename());
+            String uploadDir = "src/main/resources/static/uploads/";
+
+            // ลบรูปภาพเก่า (ถ้ามี)
+            if (book.getBookImagePath() != null && !book.getBookImagePath().isEmpty()) {
+                String oldImagePath = uploadDir + book.getBookImagePath();
+                File oldImageFile = new File(oldImagePath);
+                if (oldImageFile.exists()) {
+                    oldImageFile.delete();
+                }
+            }
+
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                try {
+                    Path fileNameAndPath = Paths.get(uploadDir, fileName);
+                    Files.write(fileNameAndPath, bookImagePath.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            book.setBookImagePath(fileName);
+        }
+
+        bookRepository.save(book);
+    }
+
+    public void deleteBook(UUID bookId) {
+        bookRepository.deleteById(bookId);
     }
 
 }

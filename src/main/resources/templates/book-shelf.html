@@ -8,9 +8,19 @@
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script src="https://kit.fontawesome.com/07c019ece4.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        button {
+            padding: 5px;
+            background: #FFFFFF;
+            border: 0;
+        }
+    </style>
 </head>
 <body>
-<div th:insert="~{fragments/header :: header}"></div>
+<div class="sticky-top" th:insert="~{fragments/header :: header}"></div>
 <div class="container">
     <h1 class="display-5">ชั้นวางเอกสาร</h1>
 
@@ -34,16 +44,17 @@
             <div class="card">
                 <img class="card-img-top" th:src="@{${'../uploads/' + tran.book.getBookImagePath()}}" alt="book image">
                 <div class="card-body">
-                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + tran.book.getBookName()}"></p>
+                    <p class="card-title" th:text="${'ชื่อเอกสาร: ' + (tran.book.getBookName().length > 20 ? tran.book.getBookName().substring(0, 20) + '...' : tran.book.getBookName())}"></p>
 
                     <div class="row">
                         <form>
-                            <div class="mb-2" th:if="${type == 'LENDING_BOOK'}">
-                                <button class="btn btn-outline-secondary btn-block" type="button">คืนเอกสาร</button>
-                            </div>
-                            <button class="btn btn-outline-secondary btn-block" type="button" data-bs-toggle="modal"
+                            <button class="btn btn-outline-secondary btn-block mb-2" type="button"
+                                    data-bs-toggle="modal"
                                     th:data-bs-target="'#detailsModal-' + ${tran.book.getBookId()}">รายละเอียด
                             </button>
+                        </form>
+                        <form th:if="${type == 'LENDING_BOOK'}" th:action="@{/books/returnBook}" method="POST">
+                            <button class="btn btn-outline-secondary btn-block" type="button" th:data-transaction-id="${tran.getTransactionId()}" onclick="returnBook(this)">คืนเอกสาร</button>
                         </form>
                         <!-- Modal -->
                         <div class="modal fade" th:id="'detailsModal-' + ${tran.book.getBookId()}" tabindex="-1"
@@ -53,8 +64,6 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="container-fluid">
@@ -83,7 +92,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -94,5 +104,32 @@
         </div>
     </div>
 </div>
+<script>
+
+    function returnBook(button) {
+
+        var transactionId = button.getAttribute('data-transaction-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'transactionId'
+        input.value = transactionId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณต้องการคืนเอกสาร?",
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+
+    }
+
+</script>
 </body>
 </html>

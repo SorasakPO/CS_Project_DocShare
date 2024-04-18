@@ -30,6 +30,9 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/customs/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/policy")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/books/myBook")).hasAnyAuthority(UserRole.ADMIN.name(), UserRole.LENDER.name())
+                        .requestMatchers(new AntPathRequestMatcher("/reports/allReports")).hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(new AntPathRequestMatcher("/books/editBook")).hasAnyAuthority(UserRole.ADMIN.name(), UserRole.LENDER.name())
 
                         .anyRequest().authenticated()
                 )

@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link th:rel="stylesheet" th:href="@{/customs/card.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="header">
@@ -30,6 +33,14 @@
                     sec:authorize="isAuthenticated()">
 <!--                    and (hasAuthority('ADMIN') or hasAuthority('LENDER'))-->
                     <a class="nav-link" th:href="@{/books/add}">เพิ่มเอกสาร</a>
+                </li>
+                <li class="nav-item"
+                    sec:authorize="isAuthenticated() and (hasAuthority('ADMIN') or hasAuthority('LENDER'))">
+                    <a class="nav-link" th:href="@{/books/myBook}">จัดการเอกสาร</a>
+                </li>
+                <li class="nav-item"
+                    sec:authorize="isAuthenticated() and (hasAuthority('ADMIN'))">
+                    <a class="nav-link" th:href="@{/reports/allReports}">จัดการรายงาน</a>
                 </li>
             </ul>
 

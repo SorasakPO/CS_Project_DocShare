@@ -48,15 +48,7 @@ public class AuthController {
 
     @PostMapping("/lender/register")
     public String lenderRegister(@ModelAttribute SignupRequest user, Principal principal) {
-//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if (userDetails != null) {
         userDetailsServiceImp.updateRoleUser(user, principal);
-//        }
-//        System.out.println("userDetails: " + userDetails);
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("authentication: " + authentication.getAuthorities());
-
         return "redirect:/books/add";
     }
 

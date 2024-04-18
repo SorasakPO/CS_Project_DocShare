@@ -1,7 +1,5 @@
 package ku.cs.csProject.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.model.BookRequest;

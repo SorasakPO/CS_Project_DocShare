@@ -218,6 +218,13 @@ public class BookService {
     }
 
     public void deleteBook(UUID bookId) {
+
+        List<Transaction> transactionList = transactionRepository.findByBook_BookId(bookId);
+        transactionRepository.deleteAll(transactionList);
+
+        List<Report> reportList = reportRepository.findAllByBook_BookId(bookId);
+        reportRepository.deleteAll(reportList);
+
         bookRepository.deleteById(bookId);
     }
 

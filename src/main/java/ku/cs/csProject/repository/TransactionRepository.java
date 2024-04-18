@@ -19,4 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     List<Transaction> findByRecipient_UserIDAndBook_BookGiveType(UUID userID, BookGiveType bookGiveType);
 
     List<Transaction> findByRecipient_UserIDAndAndBook_BookGiveTypeAndAndTransactionStatus(UUID userID, BookGiveType bookGiveType, TransactionStatus transactionStatus);
+
+    List<Transaction> findByBook_BookId(UUID bookID);
 }

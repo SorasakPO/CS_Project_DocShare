@@ -56,11 +56,21 @@
 
                     <form th:action="@{/books/edit}" method="GET" style="display: inline;">
                         <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
-                        <button class="btn btn-primary btn-sm" type="submit"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-primary btn-sm"
+                                type="submit"
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED') and #authorization.expression('hasAuthority(''LENDER'')') }">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
                     </form>
 
                     <form th:action="@{/books/deleteBook}" method="POST" style="display: inline;">
-                        <button class="btn btn-danger btn-sm" type="button" th:data-book-id="${book.getBookId()}" onclick="confirmDelete(this)"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn btn-danger btn-sm"
+                                type="button"
+                                th:data-book-id="${book.getBookId()}"
+                                onclick="confirmDelete(this)"
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED') and #authorization.expression('hasAuthority(''LENDER'')')}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </form>
                 </td>
 

@@ -14,4 +14,6 @@ public interface ReportRepository extends JpaRepository<Report, UUID> {
 
     Report findByReportId(UUID reportId);
 
+    List<Report> findAllByBook_BookId(UUID bookID);
+
 }

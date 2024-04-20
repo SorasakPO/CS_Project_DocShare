@@ -4,6 +4,7 @@ import ku.cs.csProject.common.BookGiveType;
 import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.model.BookRequest;
 import ku.cs.csProject.service.BookService;
+import ku.cs.csProject.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,9 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/donation")
     public String getBooksByBookGiveTypeDonation(Model model) {
@@ -47,13 +51,14 @@ public class BookController {
     @PostMapping("/acceptDonation")
     public String acceptDonation(@RequestParam UUID bookId, Principal principal) {
         bookService.acceptDonation(bookId, principal);
-        System.out.println(bookId);
+//        emailService.sendSimpleMessage(bookId, principal);
         return "redirect:/books/donation";
     }
 
     @PostMapping("/acceptLending")
     public String acceptLending(@RequestParam UUID bookId, @RequestParam String bookReturnDate, Principal principal) {
         bookService.acceptLending(bookId, bookReturnDate, principal);
+//        emailService.sendSimpleMessage(bookId, principal);
         return "redirect:/books/lending";
     }
 
@@ -100,4 +105,10 @@ public class BookController {
         return "redirect:/books/myBook";
     }
 
+
+    @PostMapping("/confirm")
+    public String confirm(@RequestParam("bookId") UUID bookId) {
+        bookService.confirm(bookId);
+        return "redirect:/books/myBook";
+    }
 }

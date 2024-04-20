@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Project</title>
+    <title>DocShare</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -46,19 +46,28 @@
                 <td><img th:src="@{${'../uploads/' + book.getBookImagePath()}}" alt="book image"></td>
                 <td th:text="${(book.getBookName().length > 20 ? book.getBookName().substring(0, 20) + '...' : book.getBookName())}"></td>
                 <td th:text="${book.getBookGiveType().name() == 'DONATION_BOOK' ? 'บริจาค' : 'ยืม-คืน'}"></td>
-                <td th:text="${book.getBookStatus().name() == 'AVAILABLE' ? 'พร้อมใช้งาน' : (book.getBookStatus().name() == 'BORROWED' ? 'ถูกยืม' : 'ถูกบริจาค')}"
-                    th:style="${book.getBookStatus().name() == 'AVAILABLE' ? 'color: green;' : (book.getBookStatus().name() == 'BORROWED' ? 'color: red;' : 'color: red;')}"></td>
+                <td th:text="${book.getBookStatus().name() == 'AVAILABLE' ? 'พร้อมใช้งาน' : (book.getBookStatus().name() == 'BORROWED' ? 'ถูกยืม' : (book.getBookStatus().name() == 'DONATED' ? 'ถูกบริจาค' : ( book.getBookStatus().name() == 'PENDING' ? 'รอการยืนยัน' : 'ยืนยันการคืน')))}"
+                    th:style="${book.getBookStatus().name() == 'AVAILABLE' ? 'color: green;' : (book.getBookStatus().name() == 'BORROWED' ? 'color: red;' : (book.getBookStatus().name() == 'DONATED' ? 'color: red;' : 'color: orange;'))}"></td>
                 <td>
 
                     <button class="btn btn-success btn-sm" type="button" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${book.getBookId()}">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
 
+                    <form th:action="@{/books/confirm}" method="POST" style="display: inline;">
+                        <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
+                        <button class="btn btn-warning btn-sm"
+                                type="submit"
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED' or book.bookStatus.name() == 'AVAILABLE') and #authorization.expression('hasAuthority(''LENDER'')') }">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </form>
+
                     <form th:action="@{/books/edit}" method="GET" style="display: inline;">
                         <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
                         <button class="btn btn-primary btn-sm"
                                 type="submit"
-                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED') and #authorization.expression('hasAuthority(''LENDER'')') }">
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED' or book.bookStatus.name() == 'PENDING') and #authorization.expression('hasAuthority(''LENDER'')') }">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </form>
@@ -68,7 +77,7 @@
                                 type="button"
                                 th:data-book-id="${book.getBookId()}"
                                 onclick="confirmDelete(this)"
-                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED') and #authorization.expression('hasAuthority(''LENDER'')')}">
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED' or book.bookStatus.name() == 'PENDING') and #authorization.expression('hasAuthority(''LENDER'')')}">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </form>

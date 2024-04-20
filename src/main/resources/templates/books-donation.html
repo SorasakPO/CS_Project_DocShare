@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Project</title>
+    <title>DocShare</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -41,7 +41,7 @@
                                  aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
+                                        <div class="modal-header" style="display: flex; justify-content: space-between;">
                                             <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
                                             <form th:action="@{/books/reportBook}" method="POST">
                                                 <button type="button"
@@ -49,7 +49,6 @@
                                                         th:data-book-id="${book.getBookId()}"
                                                         onclick="reportBook(this)">
                                                     <i class="fa-solid fa-circle-exclamation fa-lg"></i>
-                                                    <!--                                                    <img src="https://media.istockphoto.com/id/1163581975/vector/warning-danger-sign-triangle-frame-yellow-and-black-color-background.jpg?s=612x612&w=0&k=20&c=UsONAgKo9RG5MbkNFUgTNMP06oMh_ibBHjzgGaBhOpI=" alt="buttonpng"/>-->
                                                 </button>
                                             </form>
                                         </div>
@@ -131,10 +130,6 @@
         input.name = 'bookId'
         input.value = bookId;
         form.appendChild(input);
-        // input.type = 'hidden'
-        // input.name = 'userId'
-        // input.value = userId;
-        // form.appendChild(input);
 
         const { value: text } = await Swal.fire({
             input: "textarea",
@@ -146,7 +141,7 @@
             showCancelButton: true,
             cancelButtonText: "ยกเลิก",
             reverseButtons: true,
-            confirmButtonText: "ยืนยัน",
+            confirmButtonText: "ยืนยัน"
         });
         if (text) {
             Swal.fire({

@@ -1,22 +1,14 @@
 package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.ReportStatus;
-import ku.cs.csProject.common.UserRole;
-import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.entity.Report;
-import ku.cs.csProject.entity.User;
-import ku.cs.csProject.model.ReportRequest;
 import ku.cs.csProject.repository.BookRepository;
 import ku.cs.csProject.repository.ReportRepository;
 import ku.cs.csProject.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,16 +16,7 @@ import java.util.UUID;
 public class ReportService {
 
     @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     ReportRepository reportRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     public List<Report> getAllReports() {
         return reportRepository.findAll();

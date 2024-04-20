@@ -6,7 +6,6 @@ import ku.cs.csProject.entity.User;
 import ku.cs.csProject.model.SignupRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ku.cs.csProject.repository.UserRepository;
@@ -17,11 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class SignupService {
@@ -33,9 +29,6 @@ public class SignupService {
 
     @Autowired
     private ModelMapper modelMapper;
-
-    @Autowired
-    private UserRepository userRepository;
 
     public boolean isEmailAvailable(String email) {
         if (!email.equals("") && !email.equals("null") && !email.trim().isEmpty() && !email.contains(" ")) {

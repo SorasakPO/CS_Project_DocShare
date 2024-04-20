@@ -222,7 +222,7 @@ public class BookService {
         bookRepository.deleteById(bookId);
     }
 
-    public void confirm(UUID bookId){
+    public void confirm(UUID bookId, String confirm){
         Book book = bookRepository.findByBookId(bookId);
         if (book.getBookStatus().name().equals("RETURN")) {
             Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
@@ -230,7 +230,13 @@ public class BookService {
             transactionRepository.save(transaction);
             book.setBookStatus(BookStatus.AVAILABLE);
         }else {
-            book.setBookStatus(book.getBookGiveType().name().equals("DONATION_BOOK") ? BookStatus.DONATED : BookStatus.BORROWED);
+            if (confirm.equals("Yes")) {
+                book.setBookStatus(book.getBookGiveType().name().equals("DONATION_BOOK") ? BookStatus.DONATED : BookStatus.BORROWED);
+            }else {
+                Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
+                transactionRepository.delete(transaction);
+                book.setBookStatus(BookStatus.AVAILABLE);
+            }
         }
         bookRepository.save(book);
     }

@@ -55,9 +55,18 @@
                     </button>
 
                     <form th:action="@{/books/confirm}" method="POST" style="display: inline;">
-                        <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>
-                        <button class="btn btn-warning btn-sm"
-                                type="submit"
+<!--                        <input type="hidden" name="bookId" th:value="${book.getBookId()}"/>-->
+                        <button th:if="${book.bookStatus.name() != 'RETURN'}" class="btn btn-warning btn-sm"
+                                type="button"
+                                th:data-book-id="${book.getBookId()}"
+                                onclick="confirmPending(this)"
+                                th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED' or book.bookStatus.name() == 'AVAILABLE') and #authorization.expression('hasAuthority(''LENDER'')') }">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button th:if="${book.bookStatus.name() == 'RETURN'}" class="btn btn-warning btn-sm"
+                                type="button"
+                                th:data-book-id="${book.getBookId()}"
+                                onclick="confirmReturn(this)"
                                 th:disabled="${(book.bookStatus.name() == 'DONATED' or book.bookStatus.name() == 'BORROWED' or book.bookStatus.name() == 'AVAILABLE') and #authorization.expression('hasAuthority(''LENDER'')') }">
                             <i class="fa-solid fa-check"></i>
                         </button>
@@ -138,6 +147,69 @@
             confirmButtonText: "ยืนยัน",
         }).then((result) => {
             if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+
+    function confirmPending(button) {
+        var bookId = button.getAttribute('data-book-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณแน่ใจหรือไม่?",
+            showDenyButton: true,
+            showCancelButton: true,
+            reverseButtons: true,
+            cancelButtonText: "ยกเลิก",
+            denyButtonText: "ปฏิเสธ",
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var input = document.createElement('input');
+                input.type = 'hidden'
+                input.name = 'confirm'
+                input.value = 'Yes';
+                form.appendChild(input);
+                form.submit();
+            }else if (result.isDenied) {
+                var input = document.createElement('input');
+                input.type = 'hidden'
+                input.name = 'confirm'
+                input.value = 'No';
+                form.appendChild(input);
+                form.submit();
+            }
+        });
+    }
+
+    function confirmReturn(button) {
+        var bookId = button.getAttribute('data-book-id');
+        var form = button.closest('form');
+        var input = document.createElement('input');
+        input.type = 'hidden'
+        input.name = 'bookId'
+        input.value = bookId;
+        form.appendChild(input);
+
+        Swal.fire({
+            title: "คุณแน่ใจหรือไม่?",
+            showCancelButton: true,
+            reverseButtons: true,
+            cancelButtonText: "ยกเลิก",
+            confirmButtonText: "ยืนยัน",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var input = document.createElement('input');
+                input.type = 'hidden'
+                input.name = 'confirm'
+                input.value = 'Yes';
+                form.appendChild(input);
                 form.submit();
             }
         });

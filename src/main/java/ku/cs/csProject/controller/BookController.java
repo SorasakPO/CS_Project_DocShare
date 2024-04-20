@@ -107,8 +107,8 @@ public class BookController {
 
 
     @PostMapping("/confirm")
-    public String confirm(@RequestParam("bookId") UUID bookId) {
-        bookService.confirm(bookId);
+    public String confirm(@RequestParam("bookId") UUID bookId, @RequestParam("confirm") String confirm) {
+        bookService.confirm(bookId, confirm);
         return "redirect:/books/myBook";
     }
 }

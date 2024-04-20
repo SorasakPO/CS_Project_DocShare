@@ -1,6 +1,7 @@
 package ku.cs.csProject.service;
 
 import ku.cs.csProject.common.BookGiveType;
+import ku.cs.csProject.common.BookStatus;
 import ku.cs.csProject.common.TransactionStatus;
 import ku.cs.csProject.entity.Book;
 import ku.cs.csProject.entity.Transaction;
@@ -25,6 +26,9 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     public List<Transaction> getTransactionByRecipientIdAndBookGiveType(Principal principal, String type) {
         User recipient = userRepository.findByEmail(principal.getName());
         BookGiveType bookGiveType = BookGiveType.valueOf(type);
@@ -33,6 +37,15 @@ public class TransactionService {
         }else {
             return transactionRepository.findByRecipient_UserIDAndAndBook_BookGiveTypeAndAndTransactionStatus(recipient.getUserID(), bookGiveType, TransactionStatus.InPROCESS);
         }
+    }
+
+    public String cancelBook(UUID transactionID) {
+        Transaction transaction = transactionRepository.findByTransactionId(transactionID);
+        Book book = transaction.getBook();
+        book.setBookStatus(BookStatus.AVAILABLE);
+        bookRepository.save(book);
+        transactionRepository.delete(transaction);
+        return book.getBookGiveType().toString();
     }
 
 }

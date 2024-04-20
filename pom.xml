@@ -69,11 +69,10 @@
             <artifactId>modelmapper</artifactId>
             <version>3.1.1</version>
         </dependency>
-		<!-- JavaMail API -->
+		<!-- Spring Email -->
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
-			<version>1.6.2</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
     </dependencies>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Project</title>
+    <title>DocShare</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <link th:rel="stylesheet" th:href="@{/customs/card.css}">
@@ -45,7 +45,7 @@
                                  aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
+                                        <div class="modal-header" style="display: flex; justify-content: space-between;">
                                             <h5 class="modal-title" id="exampleModalLabel">รายละเอียดเอกสาร</h5>
                                             <form th:action="@{/books/reportBook}" method="POST">
                                                 <button type="button"
@@ -175,7 +175,10 @@
             inputAttributes: {
                 "aria-label": "Type your message here"
             },
-            showCancelButton: true
+            showCancelButton: true,
+            cancelButtonText: "ยกเลิก",
+            reverseButtons: true,
+            confirmButtonText: "ยืนยัน"
         });
         if (text) {
             Swal.fire({

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Project</title>
+    <title>DocShare</title>
     <link th:rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <script th:src="@{/js/bootstrap.min.js}"></script>
 </head>
@@ -14,10 +14,10 @@
 
     <form th:action="@{/login}" method="POST">
         <div id="error-msg" th:if="${param.error}" class="alert alert-danger">
-            Invalid email or password
+            อีเมลหรือรหัสผ่านไม่ถูกต้อง
         </div>
         <div id="logout-msg" th:if="${param.logout}" class="alert alert-success">
-            You have been logged out
+            คุณออกจากระบบแล้ว
         </div>
 
         <div class="mb-3">

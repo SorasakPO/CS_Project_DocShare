@@ -99,7 +99,7 @@ public class BookService {
 
         User recipient = userRepository.findByEmail(principal.getName());
         Book book = bookRepository.findByBookId(bookId);
-        book.setBookStatus(BookStatus.DONATED);
+        book.setBookStatus(BookStatus.PENDING);
         bookRepository.save(book);
 
         Transaction transaction = new Transaction();
@@ -114,7 +114,7 @@ public class BookService {
 
         User recipient = userRepository.findByEmail(principal.getName());
         Book book = bookRepository.findByBookId(bookId);
-        book.setBookStatus(BookStatus.BORROWED);
+        book.setBookStatus(BookStatus.PENDING);
         bookRepository.save(book);
         Transaction transaction = new Transaction();
         transaction.setBook(book);
@@ -147,12 +147,12 @@ public class BookService {
     public void returnBook(UUID transactionId) {
 
         Transaction transaction = transactionRepository.findByTransactionId(transactionId);
-        transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+        transaction.setTransactionStatus(TransactionStatus.InPROCESS);
         //transaction อาจจะมีวันที่คืนหนังสือจริงๆ
         transactionRepository.save(transaction);
 
         Book book = bookRepository.findByBookId(transaction.getBook().getBookId());
-        book.setBookStatus(BookStatus.AVAILABLE);
+        book.setBookStatus(BookStatus.RETURN);
         bookRepository.save(book);
     }
 
@@ -226,6 +226,19 @@ public class BookService {
         reportRepository.deleteAll(reportList);
 
         bookRepository.deleteById(bookId);
+    }
+
+    public void confirm(UUID bookId){
+        Book book = bookRepository.findByBookId(bookId);
+        if (book.getBookStatus().name().equals("RETURN")) {
+            Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
+            transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+            transactionRepository.save(transaction);
+            book.setBookStatus(BookStatus.AVAILABLE);
+        }else {
+            book.setBookStatus(book.getBookGiveType().name().equals("DONATION_BOOK") ? BookStatus.DONATED : BookStatus.BORROWED);
+        }
+        bookRepository.save(book);
     }
 
 }

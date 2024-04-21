@@ -226,16 +226,20 @@ public class BookService {
         Book book = bookRepository.findByBookId(bookId);
         if (book.getBookStatus().name().equals("RETURN")) {
             Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
-            transaction.setTransactionStatus(TransactionStatus.COMPLETED);
-            transactionRepository.save(transaction);
+            transactionRepository.delete(transaction);
             book.setBookStatus(BookStatus.AVAILABLE);
         }else {
             if (confirm.equals("Yes")) {
                 book.setBookStatus(book.getBookGiveType().name().equals("DONATION_BOOK") ? BookStatus.DONATED : BookStatus.BORROWED);
             }else {
-                Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
-                transactionRepository.delete(transaction);
                 book.setBookStatus(BookStatus.AVAILABLE);
+                if (book.getBookGiveType().name().equals("DONATION_BOOK")){
+                    Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.COMPLETED);
+                    transactionRepository.delete(transaction);
+                }else {
+                    Transaction transaction = transactionRepository.findByBook_BookIdAndTransactionStatus(bookId, TransactionStatus.InPROCESS);
+                    transactionRepository.delete(transaction);
+                }
             }
         }
         bookRepository.save(book);
